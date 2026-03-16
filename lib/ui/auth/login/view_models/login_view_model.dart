@@ -10,9 +10,17 @@ class LoginViewModel extends Cubit<VoidUiState> {
 
   final AuthRepository _authRepository;
 
-  Future<void> login(String email, String password) async {
+  Future<void> login({
+    String? email,
+    String? password,
+    bool signInWithGoogle = false,
+  }) async {
     emit(VoidUiState.loading());
-    final result = await _authRepository.login(email, password);
+    final result = await _authRepository.login(
+      email: email,
+      password: password,
+      signInWithGoogle: signInWithGoogle,
+    );
     switch (result) {
       case Ok<void>():
         emit(VoidUiState.idle());

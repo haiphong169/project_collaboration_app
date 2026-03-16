@@ -104,8 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                                 FocusScope.of(context).unfocus();
                                 widget.viewModel.login(
-                                  _emailController.text,
-                                  _passwordController.text,
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
                                 );
                               },
                       child: Padding(
@@ -114,6 +114,32 @@ class _LoginScreenState extends State<LoginScreen> {
                             isLoading
                                 ? CircularProgressIndicator()
                                 : Text('Login'),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        widget.viewModel.login(signInWithGoogle: true);
+                      },
+                      icon: CircleAvatar(
+                        radius: 14,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          'G',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      label: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 14.0),
+                        child: Text('Sign in with Google'),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: BorderSide(color: Colors.grey.shade300),
+                        foregroundColor: Colors.black,
                       ),
                     ),
                     if (isError) ...[

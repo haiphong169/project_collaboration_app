@@ -38,9 +38,16 @@ class AuthRepositoryRemote extends AuthRepository {
   }
 
   @override
-  Future<Result<void>> login(String email, String password) async {
+  Future<Result<void>> login({
+    String? email,
+    String? password,
+    bool signInWithGoogle = false,
+  }) async {
     try {
-      final result = await _authClient.login(email, password);
+      final result =
+          signInWithGoogle
+              ? await _authClient.signInWithGoogle()
+              : await _authClient.login(email!, password!);
       switch (result) {
         case Ok<void>():
           _isAuthenticated = true;

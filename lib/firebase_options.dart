@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '925752366644',
     projectId: 'project-collaboration-ap-eb2e5',
     storageBucket: 'project-collaboration-ap-eb2e5.firebasestorage.app',
+    androidClientId: '925752366644-qhhsloppc68ab8bde7sbdbn7queg09jn.apps.googleusercontent.com',
     iosClientId: '925752366644-mjskahndlp3ui9lrgjctmo0lpq21obap.apps.googleusercontent.com',
     iosBundleId: 'com.example.projectCollaborationApp',
   );
@@ -74,6 +75,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '925752366644',
     projectId: 'project-collaboration-ap-eb2e5',
     storageBucket: 'project-collaboration-ap-eb2e5.firebasestorage.app',
+    androidClientId: '925752366644-qhhsloppc68ab8bde7sbdbn7queg09jn.apps.googleusercontent.com',
     iosClientId: '925752366644-mjskahndlp3ui9lrgjctmo0lpq21obap.apps.googleusercontent.com',
     iosBundleId: 'com.example.projectCollaborationApp',
   );
