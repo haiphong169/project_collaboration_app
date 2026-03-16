@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "925752366644",
+    "project_id": "project-collaboration-ap-eb2e5",
+    "storage_bucket": "project-collaboration-ap-eb2e5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:925752366644:android:3ec53b5a6d234f0b9d9c61",
+        "android_client_info": {
+          "package_name": "com.example.project_collaboration_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "925752366644-92fuln9a8sheehrnf0bpl0cle87clk2m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgzSyNK1Gj6OZAaNHcc0kuP3Ki5X5UyCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "925752366644-92fuln9a8sheehrnf0bpl0cle87clk2m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "925752366644-mjskahndlp3ui9lrgjctmo0lpq21obap.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.projectCollaborationApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
