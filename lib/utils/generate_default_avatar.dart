@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:project_collaboration_app/domain/models/user.dart';
+import 'package:project_collaboration_app/features/auth/data/models/user_model.dart';
 
 class AvatarGenerator {
-  static int _generateAvatarColor() {
+  static int _generateAvatarColorValue() {
     final random = Random();
 
     final hue = random.nextDouble() * 360;
@@ -15,7 +15,7 @@ class AvatarGenerator {
     return color.value;
   }
 
-  static int _getTextColor(int backgroundColorValue) {
+  static int _getTextColorValue(int backgroundColorValue) {
     final backgroundColor = Color(backgroundColorValue);
 
     final isLight = backgroundColor.computeLuminance() > 0.5;
@@ -29,14 +29,14 @@ class AvatarGenerator {
     return username[0] + randomChar;
   }
 
-  static Avatar generateDefaultAvatar(String username) {
-    final backgroundColor = _generateAvatarColor();
-    final textColor = _getTextColor(backgroundColor);
+  static AvatarModel generateDefaultAvatar(String username) {
+    final backgroundColorValue = _generateAvatarColorValue();
+    final textColorValue = _getTextColorValue(backgroundColorValue);
     final initials = _pickInitialsFromUsername(username);
 
-    return Avatar(
-      backgroundColor: backgroundColor,
-      textColor: textColor,
+    return AvatarModel(
+      backgroundColorValue: backgroundColorValue,
+      textColorValue: textColorValue,
       initials: initials,
     );
   }

@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:project_collaboration_app/domain/abstract_repositories/auth_repository.dart';
+import 'package:project_collaboration_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:project_collaboration_app/features/auth/domain/usecases/get_user_use_case.dart';
+import 'package:project_collaboration_app/features/auth/domain/usecases/login_usecase.dart';
+import 'package:project_collaboration_app/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:project_collaboration_app/features/auth/domain/usecases/register_usecase.dart';
+import 'package:project_collaboration_app/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
+import 'package:project_collaboration_app/features/auth/presentation/bloc/login_cubit.dart';
+import 'package:project_collaboration_app/features/auth/presentation/bloc/logout_cubit.dart';
+import 'package:project_collaboration_app/features/auth/presentation/bloc/register_cubit.dart';
+import 'package:project_collaboration_app/features/auth/presentation/bloc/user_cubit.dart';
 import 'package:project_collaboration_app/routing/routes.dart';
-import 'package:project_collaboration_app/ui/auth/auth_view_model.dart';
-import 'package:project_collaboration_app/ui/auth/login/view_models/login_view_model.dart';
-import 'package:project_collaboration_app/ui/auth/login/widgets/login_screen.dart';
-import 'package:project_collaboration_app/ui/auth/logout_view_model.dart';
-import 'package:project_collaboration_app/ui/auth/register/view_models/register_view_model.dart';
-import 'package:project_collaboration_app/ui/auth/register/widgets/register_screen.dart';
-import 'package:project_collaboration_app/ui/core/ui/bottom_nav_bar_screen.dart';
-import 'package:project_collaboration_app/ui/home/widgets/home_screen.dart';
-import 'package:project_collaboration_app/ui/inbox/widgets/inbox_screen.dart';
-import 'package:project_collaboration_app/ui/messages/widgets/messages_screen.dart';
-import 'package:project_collaboration_app/ui/profile/widgets/profile_screen.dart';
+import 'package:project_collaboration_app/features/auth/presentation/screens/login_screen.dart';
+import 'package:project_collaboration_app/features/auth/presentation/screens/register_screen.dart';
+import 'package:project_collaboration_app/core/ui/bottom_nav_bar_screen.dart';
+import 'package:project_collaboration_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 GoRouter router(AuthRepository authRepository) {
@@ -25,7 +27,12 @@ GoRouter router(AuthRepository authRepository) {
         path: Routes.login,
         builder: (context, state) {
           return LoginScreen(
-            viewModel: LoginViewModel(authRepository: authRepository),
+            loginCubit: LoginCubit(
+              loginUseCase: LoginUseCase(authRepository: authRepository),
+              signInWithGoogleUseCase: SignInWithGoogleUseCase(
+                authRepository: authRepository,
+              ),
+            ),
           );
         },
       ),
@@ -33,7 +40,12 @@ GoRouter router(AuthRepository authRepository) {
         path: Routes.register,
         builder: (context, state) {
           return RegisterScreen(
-            viewModel: RegisterViewModel(authRepository: authRepository),
+            registerCubit: RegisterCubit(
+              registerUseCase: RegisterUseCase(authRepository: authRepository),
+              signInWithGoogleUseCase: SignInWithGoogleUseCase(
+                authRepository: authRepository,
+              ),
+            ),
           );
         },
       ),
@@ -68,29 +80,35 @@ GoRouter router(AuthRepository authRepository) {
           GoRoute(
             path: Routes.home,
             builder: (context, state) {
-              return HomeScreen();
+              // TODO update
+              return Placeholder();
             },
           ),
           GoRoute(
             path: Routes.messages,
             builder: (context, state) {
-              return MessagesScreen();
+              // TODO update
+              return Placeholder();
             },
           ),
           GoRoute(
             path: Routes.inbox,
             builder: (context, state) {
-              return InboxScreen();
+              // TODO update
+              return Placeholder();
             },
           ),
           GoRoute(
             path: Routes.profile,
             builder: (context, state) {
               return ProfileScreen(
-                authViewModel: AuthViewModel(authRepository: authRepository)
-                  ..fetchUser(),
-                logoutViewModel: LogoutViewModel(
-                  authRepository: authRepository,
+                userCubit: UserCubit(
+                  getUserUseCase: GetUserUseCase(
+                    authRepository: authRepository,
+                  ),
+                )..fetchUser(),
+                logoutCubit: LogoutCubit(
+                  logoutUseCase: LogoutUsecase(authRepository: authRepository),
                 ),
               );
             },
