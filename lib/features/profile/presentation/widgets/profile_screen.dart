@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project_collaboration_app/features/auth/domain/entities/user.dart';
+import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
 import 'package:project_collaboration_app/features/auth/presentation/bloc/logout_cubit.dart';
-import 'package:project_collaboration_app/features/auth/presentation/bloc/user_cubit.dart';
+import 'package:project_collaboration_app/features/user/presentation/bloc/user_cubit.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 
 class ProfileScreen extends StatelessWidget {

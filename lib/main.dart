@@ -7,7 +7,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:project_collaboration_app/config/dependencies.dart';
 import 'package:project_collaboration_app/config/hive_adapters.dart';
 import 'package:project_collaboration_app/firebase_options.dart';
-import 'package:project_collaboration_app/routing/router.dart';
+import 'package:project_collaboration_app/config/routing/router.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

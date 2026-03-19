@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:project_collaboration_app/features/auth/domain/entities/user.dart';
-import 'package:project_collaboration_app/features/auth/domain/usecases/get_user_use_case.dart';
+import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
+import 'package:project_collaboration_app/features/user/domain/usecases/get_user_use_case.dart';
 import 'package:project_collaboration_app/utils/result.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 

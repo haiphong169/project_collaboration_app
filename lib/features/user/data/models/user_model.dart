@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:project_collaboration_app/features/auth/domain/entities/user.dart';
+import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
 
 part 'user_model.g.dart';
 

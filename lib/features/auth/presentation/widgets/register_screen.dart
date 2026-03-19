@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project_collaboration_app/features/auth/presentation/bloc/register_cubit.dart';
-import 'package:project_collaboration_app/routing/routes.dart';
+import 'package:project_collaboration_app/config/routing/routes.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 import 'package:project_collaboration_app/utils/validators.dart';
 

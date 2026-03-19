@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:project_collaboration_app/routing/routes.dart';
+import 'package:project_collaboration_app/config/routing/routes.dart';
 
 class BottomNavBarScreen extends StatelessWidget {
   const BottomNavBarScreen({super.key, required this.child});

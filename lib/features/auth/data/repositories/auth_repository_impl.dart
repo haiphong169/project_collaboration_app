@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:project_collaboration_app/features/auth/data/data_sources/auth_remote_data_source.dart';
-import 'package:project_collaboration_app/features/auth/data/data_sources/user_local_data_source.dart';
-import 'package:project_collaboration_app/features/auth/data/data_sources/user_remote_data_source.dart';
-import 'package:project_collaboration_app/features/auth/data/models/user_model.dart';
-import 'package:project_collaboration_app/features/auth/domain/entities/user.dart';
+import 'package:project_collaboration_app/features/user/data/data_sources/user_local_data_source.dart';
+import 'package:project_collaboration_app/features/user/data/data_sources/user_remote_data_source.dart';
+import 'package:project_collaboration_app/features/user/data/models/user_model.dart';
+import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
 import 'package:project_collaboration_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:project_collaboration_app/utils/generate_default_avatar.dart';
 import 'package:project_collaboration_app/utils/result.dart';

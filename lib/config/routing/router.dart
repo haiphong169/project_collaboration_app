@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project_collaboration_app/features/auth/domain/repositories/auth_repository.dart';
-import 'package:project_collaboration_app/features/auth/domain/usecases/get_user_use_case.dart';
+import 'package:project_collaboration_app/features/user/domain/usecases/get_user_use_case.dart';
 import 'package:project_collaboration_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:project_collaboration_app/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:project_collaboration_app/features/auth/domain/usecases/register_usecase.dart';
@@ -9,12 +9,12 @@ import 'package:project_collaboration_app/features/auth/domain/usecases/sign_in_
 import 'package:project_collaboration_app/features/auth/presentation/bloc/login_cubit.dart';
 import 'package:project_collaboration_app/features/auth/presentation/bloc/logout_cubit.dart';
 import 'package:project_collaboration_app/features/auth/presentation/bloc/register_cubit.dart';
-import 'package:project_collaboration_app/features/auth/presentation/bloc/user_cubit.dart';
-import 'package:project_collaboration_app/routing/routes.dart';
-import 'package:project_collaboration_app/features/auth/presentation/screens/login_screen.dart';
-import 'package:project_collaboration_app/features/auth/presentation/screens/register_screen.dart';
+import 'package:project_collaboration_app/features/user/presentation/bloc/user_cubit.dart';
+import 'package:project_collaboration_app/config/routing/routes.dart';
+import 'package:project_collaboration_app/features/auth/presentation/widgets/login_screen.dart';
+import 'package:project_collaboration_app/features/auth/presentation/widgets/register_screen.dart';
 import 'package:project_collaboration_app/core/ui/bottom_nav_bar_screen.dart';
-import 'package:project_collaboration_app/features/profile/presentation/screens/profile_screen.dart';
+import 'package:project_collaboration_app/features/profile/presentation/widgets/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 GoRouter router(AuthRepository authRepository) {

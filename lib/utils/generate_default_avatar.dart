@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:project_collaboration_app/features/auth/data/models/user_model.dart';
+import 'package:project_collaboration_app/features/user/data/models/user_model.dart';
 
 class AvatarGenerator {
   static int _generateAvatarColorValue() {
