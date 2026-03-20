@@ -6,14 +6,7 @@ import 'package:project_collaboration_app/features/user/presentation/bloc/user_c
 import 'package:project_collaboration_app/utils/ui_state.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({
-    super.key,
-    required this.logoutCubit,
-    required this.userCubit,
-  });
-
-  final LogoutCubit logoutCubit;
-  final UserCubit userCubit;
+  const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +15,8 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            BlocConsumer<UserCubit, UiState<User>>(
-              bloc: userCubit,
-              listener: (_, __) {},
+            BlocBuilder<UserCubit, UiState<User>>(
+              bloc: context.read<UserCubit>(),
               builder: (context, state) {
                 return switch (state) {
                   Loading<User>() => CircularProgressIndicator(),
@@ -52,9 +44,8 @@ class ProfileScreen extends StatelessWidget {
                 };
               },
             ),
-            BlocConsumer<LogoutCubit, VoidUiState>(
-              bloc: logoutCubit,
-              listener: (_, __) {},
+            BlocBuilder<LogoutCubit, VoidUiState>(
+              bloc: context.read<LogoutCubit>(),
               builder: (context, state) {
                 final isLoading = state is Loading<void>;
                 final isError = state is Error<void>;
@@ -63,7 +54,8 @@ class ProfileScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ElevatedButton(
-                      onPressed: isLoading ? null : logoutCubit.logout,
+                      onPressed:
+                          isLoading ? null : context.read<LogoutCubit>().logout,
                       child:
                           isLoading
                               ? const CircularProgressIndicator()

@@ -7,9 +7,7 @@ import 'package:project_collaboration_app/utils/ui_state.dart';
 import 'package:project_collaboration_app/utils/validators.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key, required this.registerCubit});
-
-  final RegisterCubit registerCubit;
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -40,9 +38,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RegisterCubit, VoidUiState>(
-      bloc: widget.registerCubit,
-      listener: (_, __) {},
+    return BlocBuilder<RegisterCubit, VoidUiState>(
+      bloc: context.read<RegisterCubit>(),
       builder: (context, state) {
         final isLoading = state is Loading<void>;
         final isError = state is Error<void>;
@@ -143,7 +140,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return;
                                 }
                                 FocusScope.of(context).unfocus();
-                                widget.registerCubit.register(
+                                context.read<RegisterCubit>().register(
                                   _usernameController.text,
                                   _emailController.text,
                                   _passwordController.text,
@@ -160,7 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
                       onPressed: () {
-                        widget.registerCubit.signInWithGoogle();
+                        context.read<RegisterCubit>().signInWithGoogle();
                       },
                       icon: CircleAvatar(
                         radius: 14,

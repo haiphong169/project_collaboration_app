@@ -16,4 +16,6 @@ abstract final class Routes {
   static const inbox = '/inbox';
 
   static const profile = '/profile';
+
+  static const userSearch = '/userSearch';
 }

@@ -7,9 +7,7 @@ import 'package:project_collaboration_app/utils/ui_state.dart';
 import 'package:project_collaboration_app/utils/validators.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.loginCubit});
-
-  final LoginCubit loginCubit;
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -36,9 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginCubit, VoidUiState>(
-      bloc: widget.loginCubit,
-      listener: (_, _) {},
+    return BlocBuilder<LoginCubit, VoidUiState>(
+      bloc: context.read<LoginCubit>(),
       builder: (context, state) {
         final isLoading = state is Loading<void>;
         final isError = state is Error<void>;
@@ -103,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   return;
                                 }
                                 FocusScope.of(context).unfocus();
-                                widget.loginCubit.login(
+                                context.read<LoginCubit>().login(
                                   _emailController.text,
                                   _passwordController.text,
                                 );
@@ -119,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
                       onPressed: () {
-                        widget.loginCubit.signInWithGoogle();
+                        context.read<LoginCubit>().signInWithGoogle();
                       },
                       icon: CircleAvatar(
                         radius: 14,
