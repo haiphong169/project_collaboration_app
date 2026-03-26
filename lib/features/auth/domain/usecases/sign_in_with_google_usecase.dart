@@ -27,6 +27,12 @@ class SignInWithGoogleUseCase {
     final uid = resultData.$1;
     final displayName = resultData.$2;
 
+    final checkIfUserExists = await _userRepository.getUser(uid);
+
+    if (checkIfUserExists is Ok<User>) {
+      return await _session.setUser(checkIfUserExists.data);
+    }
+
     final user = User(
       uid: uid,
       username: displayName,

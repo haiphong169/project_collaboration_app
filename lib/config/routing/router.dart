@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:project_collaboration_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:project_collaboration_app/features/auth/domain/repositories/session_provider.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/add_conversation_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/check_existing_conversation_usecase.dart';

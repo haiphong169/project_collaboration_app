@@ -11,12 +11,16 @@ class UserRemoteDataSource {
   Future<Result<UserModel>> getUser(String uid) async {
     try {
       final userDoc = await _db.collection(_userCollection).doc(uid).get();
-      final user = UserModel.fromJson(
-        userDoc.data() as Map<String, dynamic>,
-        uid,
-      );
+      if (userDoc.exists) {
+        final user = UserModel.fromJson(
+          userDoc.data() as Map<String, dynamic>,
+          uid,
+        );
 
-      return Result.ok(user);
+        return Result.ok(user);
+      } else {
+        return Result.failure(UserNotFoundException());
+      }
     } on Exception {
       return Result.failure(FirestoreException());
     }
