@@ -11,7 +11,10 @@ class UserRemoteDataSource {
   Future<Result<UserModel>> getUser(String uid) async {
     try {
       final userDoc = await _db.collection(_userCollection).doc(uid).get();
-      final user = UserModel.fromJson(userDoc.data() as Map<String, dynamic>);
+      final user = UserModel.fromJson(
+        userDoc.data() as Map<String, dynamic>,
+        uid,
+      );
 
       return Result.ok(user);
     } on Exception {
@@ -46,7 +49,9 @@ class UserRemoteDataSource {
               .get();
 
       return Result<List<UserModel>>.ok(
-        snapshot.docs.map((doc) => UserModel.fromJson(doc.data())).toList(),
+        snapshot.docs
+            .map((doc) => UserModel.fromJson(doc.data(), doc.id))
+            .toList(),
       );
     } on Exception catch (e) {
       AppLogger().e(e);

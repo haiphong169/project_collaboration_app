@@ -25,17 +25,15 @@ final messageRemoteDataSource = MessageRemoteDataSource();
 final repositoryProviders = [
   RepositoryProvider<AuthRepository>(
     create:
-        (context) => AuthRepositoryImpl(
-          authRemoteDataSource: authRemoteDataSource,
-          userRemoteDataSource: userRemoteDataSource,
-          userLocalDataSource: userLocalDataSource,
-        ),
+        (context) =>
+            AuthRepositoryImpl(authRemoteDataSource: authRemoteDataSource),
   ),
 
   RepositoryProvider<SessionProvider>(
     create:
         (context) =>
-            SessionProviderImpl(userLocalDataSource: userLocalDataSource),
+            SessionProviderImpl(userLocalDataSource: userLocalDataSource)
+              ..init(),
   ),
 
   RepositoryProvider<UserRepository>(

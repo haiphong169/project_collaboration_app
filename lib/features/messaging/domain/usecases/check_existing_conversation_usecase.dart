@@ -14,7 +14,7 @@ class CheckExistingConversationUsecase {
        _session = sessionProvider;
 
   Future<Result<String?>> call(String partnerUid) async {
-    final userUid = await _session.userUid;
+    final userUid = _session.userUid;
     if (userUid == null) return Result.failure(UserNotFoundException());
     return _conversationRepository.checkExistingConversation(
       partnerUid,

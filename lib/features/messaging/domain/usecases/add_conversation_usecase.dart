@@ -27,7 +27,7 @@ class AddConversationUsecase {
     String messageText,
   ) async {
     // create conversation -> create first message -> return stream of conversation
-    final userUid = await _session.userUid;
+    final userUid = _session.userUid;
     if (userUid == null) return Result.failure(UserNotFoundException());
     final conversation = Conversation(
       uid: Uuid().v4(),

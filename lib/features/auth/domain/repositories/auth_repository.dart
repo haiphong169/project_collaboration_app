@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
 import 'package:project_collaboration_app/utils/result.dart';
 
-abstract class AuthRepository extends ChangeNotifier {
-  Future<User?> get user;
-  Future<VoidResult> login(String email, String password);
-  Future<VoidResult> register(String username, String email, String password);
+abstract class AuthRepository {
+  Future<Result<String>> login(String email, String password);
+  Future<Result<String>> register(
+    String username,
+    String email,
+    String password,
+  );
   Future<VoidResult> logout();
-  Future<VoidResult> signInWithGoogle();
+  Future<Result<(String, String)>> signInWithGoogle();
 }

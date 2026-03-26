@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project_collaboration_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:project_collaboration_app/features/auth/domain/repositories/session_provider.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/add_conversation_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/check_existing_conversation_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/get_conversation_list_usecase.dart';
@@ -31,11 +34,26 @@ import 'package:project_collaboration_app/core/ui/bottom_nav_bar_screen.dart';
 import 'package:project_collaboration_app/features/profile/presentation/widgets/profile_screen.dart';
 import 'package:project_collaboration_app/features/user/presentation/widgets/user_search_screen.dart';
 
-GoRouter router(AuthRepository authRepository) {
+GoRouter router(SessionListenable sessionListenable) {
   return GoRouter(
     initialLocation: Routes.home,
-    redirect: _redirect,
-    refreshListenable: authRepository,
+    redirect: (context, state) {
+      final currentUser = context.read<SessionProvider>().user;
+      final loggingIn =
+          state.matchedLocation == Routes.login ||
+          state.matchedLocation == Routes.register;
+
+      if (currentUser == null && !loggingIn) {
+        return Routes.login;
+      }
+
+      if (currentUser != null && loggingIn) {
+        return Routes.home;
+      }
+
+      return null;
+    },
+    refreshListenable: sessionListenable,
     routes: [
       GoRoute(
         path: Routes.login,
@@ -43,9 +61,15 @@ GoRouter router(AuthRepository authRepository) {
           return BlocProvider(
             create:
                 (context) => LoginCubit(
-                  loginUseCase: LoginUseCase(authRepository: authRepository),
+                  loginUseCase: LoginUseCase(
+                    authRepository: context.read(),
+                    userRepository: context.read(),
+                    sessionProvider: context.read(),
+                  ),
                   signInWithGoogleUseCase: SignInWithGoogleUseCase(
-                    authRepository: authRepository,
+                    authRepository: context.read(),
+                    userRepository: context.read(),
+                    sessionProvider: context.read(),
                   ),
                 ),
             child: LoginScreen(),
@@ -59,10 +83,14 @@ GoRouter router(AuthRepository authRepository) {
             create:
                 (context) => RegisterCubit(
                   registerUseCase: RegisterUseCase(
-                    authRepository: authRepository,
+                    authRepository: context.read(),
+                    userRepository: context.read(),
+                    sessionProvider: context.read(),
                   ),
                   signInWithGoogleUseCase: SignInWithGoogleUseCase(
-                    authRepository: authRepository,
+                    authRepository: context.read(),
+                    userRepository: context.read(),
+                    sessionProvider: context.read(),
                   ),
                 ),
             child: RegisterScreen(),
@@ -201,7 +229,7 @@ GoRouter router(AuthRepository authRepository) {
                     create:
                         (context) => UserCubit(
                           getUserUseCase: GetUserUseCase(
-                            authRepository: authRepository,
+                            sessionProvider: context.read(),
                           ),
                         )..fetchUser(),
                   ),
@@ -209,7 +237,8 @@ GoRouter router(AuthRepository authRepository) {
                     create:
                         (context) => LogoutCubit(
                           logoutUseCase: LogoutUsecase(
-                            authRepository: authRepository,
+                            authRepository: context.read(),
+                            sessionProvider: context.read(),
                           ),
                         ),
                   ),
@@ -224,19 +253,19 @@ GoRouter router(AuthRepository authRepository) {
   );
 }
 
-Future<String?> _redirect(BuildContext context, GoRouterState state) async {
-  final currentUser = await context.read<AuthRepository>().user;
-  final loggingIn =
-      state.matchedLocation == Routes.login ||
-      state.matchedLocation == Routes.register;
+class SessionListenable extends ChangeNotifier {
+  final SessionProvider sessionProvider;
+  late final StreamSubscription _sub;
 
-  if (currentUser == null && !loggingIn) {
-    return Routes.login;
+  SessionListenable(this.sessionProvider) {
+    _sub = sessionProvider.sessionStream.listen((_) {
+      notifyListeners();
+    });
   }
 
-  if (currentUser != null && loggingIn) {
-    return Routes.home;
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
   }
-
-  return null;
 }

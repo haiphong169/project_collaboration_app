@@ -15,7 +15,7 @@ class GetConversationListUsecase {
        _session = sessionProvider;
 
   Future<Result<Stream<List<Conversation>>>> call() async {
-    final uid = await _session.userUid;
+    final uid = _session.userUid;
     if (uid == null) return Result.failure(UserNotFoundException());
     return _conversationRepository.conversations(uid);
   }

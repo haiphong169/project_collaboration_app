@@ -20,8 +20,7 @@ class SendMessageUsecase {
        _session = sessionProvider;
 
   Future<VoidResult> call(String messageText, String conversationUid) async {
-    // send message -> update last message in conversation
-    final userUid = await _session.userUid;
+    final userUid = _session.userUid;
     if (userUid == null) return Result.failure(UserNotFoundException());
     final message = Message(
       uid: Uuid().v4(),

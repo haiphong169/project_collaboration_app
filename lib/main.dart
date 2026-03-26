@@ -8,11 +8,9 @@ import 'package:project_collaboration_app/config/dependencies.dart';
 import 'package:project_collaboration_app/config/hive_adapters.dart';
 import 'package:project_collaboration_app/firebase_options.dart';
 import 'package:project_collaboration_app/config/routing/router.dart';
-import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Provider.debugCheckInvalidValueType = null;
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GoogleSignIn.instance.initialize(
     serverClientId:
@@ -41,7 +39,7 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    _router = router(context.read());
+    _router = router(SessionListenable(context.read()));
   }
 
   @override

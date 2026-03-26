@@ -17,11 +17,7 @@ class LogoutCubit extends Cubit<VoidUiState> {
       case Ok<void>():
         emit(VoidUiState.idle());
       case Failure<void>():
-        emit(
-          VoidUiState.error(
-            'Something wrong happened, could not log you out right now',
-          ),
-        );
+        emit(VoidUiState.error(result.error.message));
     }
   }
 }

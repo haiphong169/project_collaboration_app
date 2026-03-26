@@ -23,7 +23,7 @@ class UserLocalDataSource {
     }
   }
 
-  Future<Result<void>> saveUser(UserModel? user) async {
+  Future<VoidResult> saveUser(UserModel? user) async {
     try {
       final box = await _openBox();
       return Result.ok(box.put(_userKey, user));

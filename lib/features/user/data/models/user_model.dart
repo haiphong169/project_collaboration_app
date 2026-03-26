@@ -19,16 +19,16 @@ class UserModel {
   });
 
   Map<String, dynamic> toJson() => {
-    'uid': uid,
     'username': username,
     'avatar': avatar.toJson(),
   };
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    uid: json['uid'] as String,
-    username: json['username'] as String,
-    avatar: AvatarModel.fromJson(json['avatar'] as Map<String, dynamic>),
-  );
+  factory UserModel.fromJson(Map<String, dynamic> json, String userUid) =>
+      UserModel(
+        uid: userUid,
+        username: json['username'] as String,
+        avatar: AvatarModel.fromJson(json['avatar'] as Map<String, dynamic>),
+      );
 
   User toEntity() {
     return User(uid: uid, username: username, avatar: avatar.toEntity());
