@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_collaboration_app/features/project/domain/entities/task_list.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/add_task_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/check_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/add_task_list_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/delete_task_list_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/get_task_lists_usecase.dart';
-import 'package:project_collaboration_app/utils/logger.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 
 class ProjectScreenCubit extends Cubit<UiState<List<TaskList>>> {
@@ -15,17 +15,20 @@ class ProjectScreenCubit extends Cubit<UiState<List<TaskList>>> {
     required AddTaskListUseCase addTaskListUseCase,
     required DeleteTaskListUseCase deleteTaskListUseCase,
     required AddTaskUseCase addTaskUseCase,
+    required CheckTaskUseCase checkTaskUseCase,
     required this.projectUid,
   }) : _getTaskList = getTaskListUseCase,
        _addTaskList = addTaskListUseCase,
        _deleteTaskList = deleteTaskListUseCase,
        _addTask = addTaskUseCase,
+       _checkTask = checkTaskUseCase,
        super(UiState.idle());
 
   final GetTaskListsUseCase _getTaskList;
   final AddTaskListUseCase _addTaskList;
   final DeleteTaskListUseCase _deleteTaskList;
   final AddTaskUseCase _addTask;
+  final CheckTaskUseCase _checkTask;
   StreamSubscription? _taskListSubscription;
   final String projectUid;
 
@@ -36,10 +39,10 @@ class ProjectScreenCubit extends Cubit<UiState<List<TaskList>>> {
       _taskListSubscription?.cancel();
       _taskListSubscription = taskListsStream.listen(
         (taskLists) => emit(UiState.success(taskLists)),
-        // onError: (e) => emit(UiState.error(e.toString())),
+        onError: (e) => emit(UiState.error(e.toString())),
       );
     } on Exception catch (e) {
-      emit(UiState.error(e.runtimeType.toString()));
+      emit(UiState.error(e.toString()));
     }
   }
 
@@ -62,6 +65,14 @@ class ProjectScreenCubit extends Cubit<UiState<List<TaskList>>> {
   void addTask(String taskListUid, String name) {
     try {
       _addTask(projectUid, taskListUid, name);
+    } on Exception catch (e) {
+      emit(UiState.error(e.toString()));
+    }
+  }
+
+  void checkTask(String taskListUid, String taskUid, bool newValue) {
+    try {
+      _checkTask(projectUid, taskListUid, taskUid, newValue);
     } on Exception catch (e) {
       emit(UiState.error(e.toString()));
     }

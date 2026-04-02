@@ -60,18 +60,21 @@ class TaskHeaderModelAdapter extends TypeAdapter<TaskHeaderModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return TaskHeaderModel(
-      name: fields[0] as String,
-      isCompleted: fields[1] as bool,
+      taskUid: fields[0] as String,
+      name: fields[1] as String,
+      isCompleted: fields[2] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, TaskHeaderModel obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.taskUid)
       ..writeByte(1)
+      ..write(obj.name)
+      ..writeByte(2)
       ..write(obj.isCompleted);
   }
 

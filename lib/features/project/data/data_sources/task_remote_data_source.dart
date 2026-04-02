@@ -35,14 +35,28 @@ class TaskRemoteDataSource {
     String taskUid,
     Map<String, dynamic> fields,
   ) {
-    return _db
+    final batch = _db.batch();
+
+    final taskListRef = _db
         .collection(_projectCollection)
         .doc(projectUid)
         .collection(_taskListCollection)
-        .doc(taskListUid)
-        .collection(_taskCollection)
-        .doc(taskUid)
-        .update(fields);
+        .doc(taskListUid);
+
+    final taskRef = taskListRef.collection(_taskCollection).doc(taskUid);
+
+    batch.update(taskRef, fields);
+
+    final headerFields = {
+      if (fields.containsKey('name'))
+        'taskHeaders.$taskUid.name': fields['name'],
+      if (fields.containsKey('isCompleted'))
+        'taskHeaders.$taskUid.isCompleted': fields['isCompleted'],
+    };
+
+    batch.update(taskListRef, headerFields);
+
+    return batch.commit();
   }
 
   Future<TaskModel> getTask(

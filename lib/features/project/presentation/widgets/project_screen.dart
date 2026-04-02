@@ -218,7 +218,9 @@ class _ProjectScreenState extends State<ProjectScreen> {
                       padding: EdgeInsets.zero,
                       children:
                           taskList.taskHeaders.values
-                              .map((header) => _taskHeader(header))
+                              .map(
+                                (header) => _taskHeader(header, taskList.uid),
+                              )
                               .toList(),
                     ),
                 Padding(
@@ -270,14 +272,20 @@ class _ProjectScreenState extends State<ProjectScreen> {
     }).toList();
   }
 
-  Widget _taskHeader(TaskHeader header) {
+  Widget _taskHeader(TaskHeader header, String taskListUid) {
     return Card(
       margin: const EdgeInsets.only(right: 16, bottom: 12),
       child: Row(
         children: [
           Checkbox(
             value: header.isCompleted,
-            onChanged: (newValue) {},
+            onChanged: (newValue) {
+              context.read<ProjectScreenCubit>().checkTask(
+                taskListUid,
+                header.taskUid,
+                newValue!,
+              );
+            },
             shape: CircleBorder(),
             checkColor: Colors.white,
             fillColor: WidgetStateProperty.resolveWith((states) {

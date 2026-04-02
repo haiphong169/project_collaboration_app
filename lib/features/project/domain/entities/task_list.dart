@@ -18,11 +18,16 @@ class TaskList extends Equatable {
 }
 
 class TaskHeader extends Equatable {
+  final String taskUid;
   final String name;
   final bool isCompleted;
 
-  const TaskHeader({required this.name, required this.isCompleted});
+  const TaskHeader({
+    required this.taskUid,
+    required this.name,
+    required this.isCompleted,
+  });
 
   @override
-  List<Object?> get props => [name, isCompleted];
+  List<Object?> get props => [taskUid, name, isCompleted];
 }

@@ -23,6 +23,7 @@ import 'package:project_collaboration_app/features/project/domain/repositories/t
 import 'package:project_collaboration_app/features/project/domain/usecases/project/add_project_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/project/get_projects_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/add_task_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/check_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/add_task_list_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/delete_task_list_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/get_task_lists_usecase.dart';
@@ -232,6 +233,11 @@ final repositoryProviders = [
     create:
         (context) =>
             AddTaskUseCase(taskRepository: context.read<TaskRepository>()),
+  ),
+  RepositoryProvider<CheckTaskUseCase>(
+    create:
+        (context) =>
+            CheckTaskUseCase(taskRepository: context.read<TaskRepository>()),
   ),
 ];
 

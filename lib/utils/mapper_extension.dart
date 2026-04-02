@@ -77,7 +77,11 @@ extension TaskListMapper on TaskList {
 
 extension TaskHeaderMapper on TaskHeader {
   TaskHeaderModel toModel() {
-    return TaskHeaderModel(name: name, isCompleted: isCompleted);
+    return TaskHeaderModel(
+      taskUid: taskUid,
+      name: name,
+      isCompleted: isCompleted,
+    );
   }
 }
 

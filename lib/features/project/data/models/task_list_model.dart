@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 import 'package:project_collaboration_app/features/project/domain/entities/task_list.dart';
-import 'package:project_collaboration_app/utils/logger.dart';
 
 part 'task_list_model.g.dart';
 
@@ -34,7 +33,7 @@ class TaskListModel {
       taskHeaders: (map['taskHeaders'] as Map<String, dynamic>).map(
         (key, value) => MapEntry(
           key,
-          TaskHeaderModel.fromJson(value as Map<String, dynamic>),
+          TaskHeaderModel.fromJson(value as Map<String, dynamic>, key),
         ),
       ),
     );
@@ -64,14 +63,21 @@ class TaskListModel {
 @HiveType(typeId: 7)
 class TaskHeaderModel {
   @HiveField(0)
-  final String name;
+  final String taskUid;
   @HiveField(1)
+  final String name;
+  @HiveField(2)
   final bool isCompleted;
 
-  const TaskHeaderModel({required this.name, required this.isCompleted});
+  const TaskHeaderModel({
+    required this.taskUid,
+    required this.name,
+    required this.isCompleted,
+  });
 
-  factory TaskHeaderModel.fromJson(Map<String, dynamic> map) {
+  factory TaskHeaderModel.fromJson(Map<String, dynamic> map, String taskUid) {
     return TaskHeaderModel(
+      taskUid: taskUid,
       name: map['name'] as String,
       isCompleted: map['isCompleted'] as bool,
     );
@@ -82,6 +88,6 @@ class TaskHeaderModel {
   }
 
   TaskHeader toEntity() {
-    return TaskHeader(name: name, isCompleted: isCompleted);
+    return TaskHeader(taskUid: taskUid, name: name, isCompleted: isCompleted);
   }
 }
