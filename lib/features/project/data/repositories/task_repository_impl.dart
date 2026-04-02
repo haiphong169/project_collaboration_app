@@ -21,8 +21,31 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<void> updateTask(Task task) {
-    // TODO: implement updateTask
-    throw UnimplementedError();
+  Future<Task> getTask(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+  ) async {
+    final model = await _taskRemoteDataSource.getTask(
+      projectUid,
+      taskListUid,
+      taskUid,
+    );
+    return model.toEntity();
+  }
+
+  @override
+  Future<void> updateTaskFields(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    Map<String, dynamic> fields,
+  ) {
+    return _taskRemoteDataSource.updateTask(
+      projectUid,
+      taskListUid,
+      taskUid,
+      fields,
+    );
   }
 }

@@ -4,7 +4,6 @@ import 'package:project_collaboration_app/features/messaging/domain/entities/mes
 import 'package:project_collaboration_app/features/messaging/domain/repositories/conversation_repository.dart';
 import 'package:project_collaboration_app/features/messaging/domain/repositories/message_repository.dart';
 import 'package:project_collaboration_app/utils/app_exception.dart';
-import 'package:project_collaboration_app/utils/logger.dart';
 import 'package:project_collaboration_app/utils/result.dart';
 import 'package:project_collaboration_app/utils/type_def.dart';
 import 'package:uuid/uuid.dart';
@@ -42,7 +41,6 @@ class AddConversationUsecase {
     if (conversationResult is Failure<void>) {
       return Result.failure(FirestoreException());
     }
-    AppLogger().d(1);
     final firstMessage = Message(
       uid: Uuid().v4(),
       conversationUid: conversation.uid,
@@ -54,7 +52,6 @@ class AddConversationUsecase {
     if (messageResult is Failure<void>) {
       return Result.failure(FirestoreException());
     }
-    AppLogger().d(2);
     final streamResult = await _messageRepository.conversationMessages(
       conversation.uid,
     );

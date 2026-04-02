@@ -28,17 +28,4 @@ class TaskListRepositoryImpl implements TaskListRepository {
       (modelList) => modelList.map((model) => model.toEntity()).toList(),
     );
   }
-
-  @override
-  Future<void> updateTaskList(
-    String projectUid,
-    String taskListUid,
-    List<TaskHeader> newHeaders,
-  ) {
-    return _taskListRemoteDataSource.updateTaskList(
-      projectUid,
-      taskListUid,
-      newHeaders.map((header) => header.toModel()).toList(),
-    );
-  }
 }

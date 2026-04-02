@@ -20,7 +20,7 @@ class TaskListModelAdapter extends TypeAdapter<TaskListModel> {
       uid: fields[0] as String,
       projectUid: fields[1] as String,
       name: fields[2] as String,
-      taskHeaders: (fields[3] as List).cast<TaskHeaderModel>(),
+      taskHeaders: (fields[3] as Map).cast<String, TaskHeaderModel>(),
     );
   }
 
@@ -60,21 +60,18 @@ class TaskHeaderModelAdapter extends TypeAdapter<TaskHeaderModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return TaskHeaderModel(
-      uid: fields[0] as String,
-      name: fields[1] as String,
-      isCompleted: fields[2] as bool,
+      name: fields[0] as String,
+      isCompleted: fields[1] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, TaskHeaderModel obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.uid)
-      ..writeByte(1)
-      ..write(obj.name)
       ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
       ..write(obj.isCompleted);
   }
 

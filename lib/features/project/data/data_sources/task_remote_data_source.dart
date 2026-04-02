@@ -8,13 +8,62 @@ class TaskRemoteDataSource {
   static const String _taskCollection = 'tasks';
 
   Future<void> createTask(TaskModel task) {
-    return _db
+    final batch = _db.batch();
+
+    final taskListRef = _db
         .collection(_projectCollection)
         .doc(task.projectUid)
         .collection(_taskListCollection)
-        .doc(task.taskListUid)
+        .doc(task.taskListUid);
+
+    final taskRef = taskListRef.collection(_taskCollection).doc(task.uid);
+
+    batch.set(taskRef, task.toJson());
+    batch.update(taskListRef, {
+      'taskHeaders.${task.uid}': {
+        'name': task.name,
+        'isCompleted': task.isCompleted,
+      },
+    });
+
+    return batch.commit();
+  }
+
+  Future<void> updateTask(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    Map<String, dynamic> fields,
+  ) {
+    return _db
+        .collection(_projectCollection)
+        .doc(projectUid)
+        .collection(_taskListCollection)
+        .doc(taskListUid)
         .collection(_taskCollection)
-        .doc(task.uid)
-        .set(task.toJson());
+        .doc(taskUid)
+        .update(fields);
+  }
+
+  Future<TaskModel> getTask(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+  ) async {
+    final docSnapshot =
+        await _db
+            .collection(_projectCollection)
+            .doc(projectUid)
+            .collection(_taskListCollection)
+            .doc(taskListUid)
+            .collection(_taskCollection)
+            .doc(taskUid)
+            .get();
+    return TaskModel.fromJson(
+      docSnapshot.data()!,
+      taskUid,
+      taskListUid,
+      projectUid,
+    );
   }
 }

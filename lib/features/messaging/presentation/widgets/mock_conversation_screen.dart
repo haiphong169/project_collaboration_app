@@ -56,9 +56,7 @@ class _MockConversationScreenState extends State<MockConversationScreen> {
                     Expanded(child: TextField(controller: _controller)),
                     IconButton(
                       onPressed: () {
-                        AppLogger().d("hi");
                         if (state is ChatEmpty) {
-                          AppLogger().d("hello");
                           context.read<MockConversationBloc>().add(
                             ConversationCreated(_controller.text),
                           );

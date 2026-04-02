@@ -6,6 +6,7 @@ import 'package:project_collaboration_app/features/project/domain/usecases/task/
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/add_task_list_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/delete_task_list_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/get_task_lists_usecase.dart';
+import 'package:project_collaboration_app/utils/logger.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 
 class ProjectScreenCubit extends Cubit<UiState<List<TaskList>>> {
@@ -35,10 +36,10 @@ class ProjectScreenCubit extends Cubit<UiState<List<TaskList>>> {
       _taskListSubscription?.cancel();
       _taskListSubscription = taskListsStream.listen(
         (taskLists) => emit(UiState.success(taskLists)),
-        onError: (e) => emit(UiState.error(e.toString())),
+        // onError: (e) => emit(UiState.error(e.toString())),
       );
     } on Exception catch (e) {
-      emit(UiState.error(e.toString()));
+      emit(UiState.error(e.runtimeType.toString()));
     }
   }
 
@@ -58,9 +59,9 @@ class ProjectScreenCubit extends Cubit<UiState<List<TaskList>>> {
     }
   }
 
-  void addTask(String taskListUid, List<TaskHeader> headers, String name) {
+  void addTask(String taskListUid, String name) {
     try {
-      _addTask(projectUid, taskListUid, headers, name);
+      _addTask(projectUid, taskListUid, name);
     } on Exception catch (e) {
       emit(UiState.error(e.toString()));
     }

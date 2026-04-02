@@ -39,18 +39,16 @@ class TaskListRemoteDataSource {
         .delete();
   }
 
-  Future<void> updateTaskList(
+  Future<void> updateTaskListFields(
     String projectUid,
     String taskListUid,
-    List<TaskHeaderModel> newHeaders,
+    Map<String, dynamic> fields,
   ) {
     return _db
         .collection(_projectCollection)
         .doc(projectUid)
         .collection(_taskListCollection)
         .doc(taskListUid)
-        .update({
-          'taskHeaders': newHeaders.map((header) => header.toJson()).toList(),
-        });
+        .update(fields);
   }
 }

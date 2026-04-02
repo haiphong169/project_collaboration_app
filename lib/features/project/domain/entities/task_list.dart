@@ -4,7 +4,7 @@ class TaskList extends Equatable {
   final String uid;
   final String projectUid;
   final String name;
-  final List<TaskHeader> taskHeaders;
+  final Map<String, TaskHeader> taskHeaders;
 
   const TaskList({
     required this.uid,
@@ -18,16 +18,11 @@ class TaskList extends Equatable {
 }
 
 class TaskHeader extends Equatable {
-  final String uid;
   final String name;
   final bool isCompleted;
 
-  const TaskHeader({
-    required this.uid,
-    required this.name,
-    required this.isCompleted,
-  });
+  const TaskHeader({required this.name, required this.isCompleted});
 
   @override
-  List<Object?> get props => [uid, name, isCompleted];
+  List<Object?> get props => [name, isCompleted];
 }

@@ -23,7 +23,6 @@ class _ProjectScreenState extends State<ProjectScreen> {
   bool _isAddingNewTaskList = false;
   String? _addingTaskListUid;
   String _newTaskName = '';
-  List<TaskHeader>? _currentHeaders;
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +147,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
         ),
         backgroundColor: Color(widget.backgroundColorValue),
       );
-    } else if (_isAddingNewTask) {
+    } else if (_addingTaskListUid != null) {
       return AppBar(
         title: Text('Add task'),
         actions: [
@@ -159,12 +158,10 @@ class _ProjectScreenState extends State<ProjectScreen> {
                     : () {
                       context.read<ProjectScreenCubit>().addTask(
                         _addingTaskListUid!,
-                        _currentHeaders!,
                         _newTaskName,
                       );
                       setState(() {
                         _addingTaskListUid = null;
-                        _currentHeaders = null;
                         _newTaskName = '';
                       });
                     },
@@ -176,7 +173,6 @@ class _ProjectScreenState extends State<ProjectScreen> {
             setState(() {
               _newTaskName = '';
               _addingTaskListUid = null;
-              _currentHeaders = null;
             });
           },
           icon: Icon(Icons.close),
@@ -217,19 +213,19 @@ class _ProjectScreenState extends State<ProjectScreen> {
                 ),
                 taskList.taskHeaders.isEmpty
                     ? SizedBox()
-                    : ListView.builder(
+                    : ListView(
                       shrinkWrap: true,
                       padding: EdgeInsets.zero,
-                      itemCount: taskList.taskHeaders.length,
-                      itemBuilder: (context, index) {
-                        final header = taskList.taskHeaders[index];
-                        return Row(children: [Text(header.name)]);
-                      },
+                      children:
+                          taskList.taskHeaders.values
+                              .map((header) => _taskHeader(header))
+                              .toList(),
                     ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   child:
-                      _isAddingNewTask && _addingTaskListUid == taskList.uid
+                      _addingTaskListUid != null &&
+                              _addingTaskListUid == taskList.uid
                           ? TextField(
                             decoration: InputDecoration(
                               fillColor: Theme.of(context).colorScheme.surface,
@@ -255,7 +251,6 @@ class _ProjectScreenState extends State<ProjectScreen> {
                             onPressed: () {
                               setState(() {
                                 _addingTaskListUid = taskList.uid;
-                                _currentHeaders = taskList.taskHeaders;
                               });
                             },
                             icon: Icon(Icons.add, size: 16, color: Colors.blue),
@@ -275,6 +270,26 @@ class _ProjectScreenState extends State<ProjectScreen> {
     }).toList();
   }
 
-  bool get _isAddingNewTask =>
-      _addingTaskListUid != null && _currentHeaders != null;
+  Widget _taskHeader(TaskHeader header) {
+    return Card(
+      margin: const EdgeInsets.only(right: 16, bottom: 12),
+      child: Row(
+        children: [
+          Checkbox(
+            value: header.isCompleted,
+            onChanged: (newValue) {},
+            shape: CircleBorder(),
+            checkColor: Colors.white,
+            fillColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return Colors.green;
+              }
+              return Colors.transparent;
+            }),
+          ),
+          Text(header.name),
+        ],
+      ),
+    );
+  }
 }

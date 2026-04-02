@@ -230,10 +230,8 @@ final repositoryProviders = [
   ),
   RepositoryProvider<AddTaskUseCase>(
     create:
-        (context) => AddTaskUseCase(
-          taskRepository: context.read<TaskRepository>(),
-          taskListRepository: context.read<TaskListRepository>(),
-        ),
+        (context) =>
+            AddTaskUseCase(taskRepository: context.read<TaskRepository>()),
   ),
 ];
 
