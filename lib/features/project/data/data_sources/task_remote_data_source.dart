@@ -1,22 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_collaboration_app/features/project/data/models/task_model.dart';
+import 'package:project_collaboration_app/utils/firebase_path.dart';
 
 class TaskRemoteDataSource {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  static const String _projectCollection = 'projects';
-  static const String _taskListCollection = 'task_lists';
-  static const String _taskCollection = 'tasks';
 
   Future<void> createTask(TaskModel task) {
     final batch = _db.batch();
 
     final taskListRef = _db
-        .collection(_projectCollection)
+        .collection(FirebasePath.projects)
         .doc(task.projectUid)
-        .collection(_taskListCollection)
+        .collection(FirebasePath.taskLists)
         .doc(task.taskListUid);
 
-    final taskRef = taskListRef.collection(_taskCollection).doc(task.uid);
+    final taskRef = taskListRef.collection(FirebasePath.tasks).doc(task.uid);
 
     batch.set(taskRef, task.toJson());
     batch.update(taskListRef, {
@@ -38,12 +36,12 @@ class TaskRemoteDataSource {
     final batch = _db.batch();
 
     final taskListRef = _db
-        .collection(_projectCollection)
+        .collection(FirebasePath.projects)
         .doc(projectUid)
-        .collection(_taskListCollection)
+        .collection(FirebasePath.taskLists)
         .doc(taskListUid);
 
-    final taskRef = taskListRef.collection(_taskCollection).doc(taskUid);
+    final taskRef = taskListRef.collection(FirebasePath.tasks).doc(taskUid);
 
     batch.update(taskRef, fields);
 
@@ -66,11 +64,11 @@ class TaskRemoteDataSource {
   ) async {
     final docSnapshot =
         await _db
-            .collection(_projectCollection)
+            .collection(FirebasePath.projects)
             .doc(projectUid)
-            .collection(_taskListCollection)
+            .collection(FirebasePath.taskLists)
             .doc(taskListUid)
-            .collection(_taskCollection)
+            .collection(FirebasePath.tasks)
             .doc(taskUid)
             .get();
     return TaskModel.fromJson(

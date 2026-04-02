@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_collaboration_app/features/messaging/presentation/bloc/chat_event.dart';
 import 'package:project_collaboration_app/features/messaging/presentation/bloc/chat_state.dart';
 import 'package:project_collaboration_app/features/messaging/presentation/bloc/mock_conversation_bloc.dart';
-import 'package:project_collaboration_app/utils/logger.dart';
 
 class MockConversationScreen extends StatefulWidget {
   const MockConversationScreen({super.key});

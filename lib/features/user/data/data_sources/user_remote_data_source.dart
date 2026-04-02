@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_collaboration_app/features/user/data/models/user_model.dart';
 import 'package:project_collaboration_app/utils/app_exception.dart';
+import 'package:project_collaboration_app/utils/firebase_path.dart';
 import 'package:project_collaboration_app/utils/logger.dart';
 import 'package:project_collaboration_app/utils/result.dart';
 
 class UserRemoteDataSource {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  static const String _userCollection = 'users';
 
   Future<Result<UserModel>> getUser(String uid) async {
     try {
-      final userDoc = await _db.collection(_userCollection).doc(uid).get();
+      final userDoc = await _db.collection(FirebasePath.users).doc(uid).get();
       if (userDoc.exists) {
         final user = UserModel.fromJson(
           userDoc.data() as Map<String, dynamic>,
@@ -28,7 +28,7 @@ class UserRemoteDataSource {
 
   Future<VoidResult> saveUser(String uid, UserModel user) async {
     try {
-      await _db.collection(_userCollection).doc(uid).set({
+      await _db.collection(FirebasePath.users).doc(uid).set({
         ...user.toJson(),
         'username_lowercase': user.username.toLowerCase(),
       });
@@ -43,7 +43,7 @@ class UserRemoteDataSource {
     try {
       final snapshot =
           await _db
-              .collection(_userCollection)
+              .collection(FirebasePath.users)
               .where('username_lowercase', isGreaterThanOrEqualTo: normalized)
               .where(
                 'username_lowercase',

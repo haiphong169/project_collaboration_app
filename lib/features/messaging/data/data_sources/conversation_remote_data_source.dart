@@ -2,18 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_collaboration_app/features/messaging/data/models/conversation_model.dart';
 import 'package:project_collaboration_app/features/messaging/data/models/message_model.dart';
 import 'package:project_collaboration_app/utils/app_exception.dart';
+import 'package:project_collaboration_app/utils/firebase_path.dart';
 import 'package:project_collaboration_app/utils/result.dart';
 
 class ConversationRemoteDataSource {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  static const String _conversationKey = 'conversations';
 
   Future<Result<Stream<List<ConversationModel>>>> getConversations(
     String userUid,
   ) async {
     try {
       final conversationStream = _db
-          .collection(_conversationKey)
+          .collection(FirebasePath.conversations)
           .where('participants', arrayContains: userUid)
           .orderBy('lastMessageAt', descending: true)
           .snapshots()
@@ -31,7 +31,7 @@ class ConversationRemoteDataSource {
   Future<VoidResult> addConversation(ConversationModel conversation) async {
     try {
       await _db
-          .collection(_conversationKey)
+          .collection(FirebasePath.conversations)
           .doc(conversation.uid)
           .set(conversation.toJson());
       return Result.ok(null);
@@ -42,7 +42,10 @@ class ConversationRemoteDataSource {
 
   Future<VoidResult> deleteConversation(String conversationUid) async {
     try {
-      await _db.collection(_conversationKey).doc(conversationUid).delete();
+      await _db
+          .collection(FirebasePath.conversations)
+          .doc(conversationUid)
+          .delete();
       return Result.ok(null);
     } on Exception {
       return Result.failure(FirestoreException());
@@ -54,11 +57,14 @@ class ConversationRemoteDataSource {
     MessageModel message,
   ) async {
     try {
-      await _db.collection(_conversationKey).doc(conversationUid).update({
-        'lastMessage': message.text,
-        'lastMessageAt': Timestamp.fromDate(message.createdAt),
-        'lastMessageSenderUid': message.senderUid,
-      });
+      await _db
+          .collection(FirebasePath.conversations)
+          .doc(conversationUid)
+          .update({
+            'lastMessage': message.text,
+            'lastMessageAt': Timestamp.fromDate(message.createdAt),
+            'lastMessageSenderUid': message.senderUid,
+          });
       return Result.ok(null);
     } on Exception {
       return Result.failure(FirestoreException());
@@ -72,7 +78,7 @@ class ConversationRemoteDataSource {
     try {
       final snapshot =
           await _db
-              .collection(_conversationKey)
+              .collection(FirebasePath.conversations)
               .where('participants', arrayContains: userUid)
               .get();
 

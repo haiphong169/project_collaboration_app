@@ -1,17 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_collaboration_app/features/project/data/models/task_list_model.dart';
+import 'package:project_collaboration_app/utils/firebase_path.dart';
 
 class TaskListRemoteDataSource {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  static const String _projectCollection = 'projects';
-  static const String _taskListCollection = 'task_lists';
 
   Stream<List<TaskListModel>> getTaskListStream(String projectUid) {
     // todo add order by position
     final taskListStream = _db
-        .collection(_projectCollection)
+        .collection(FirebasePath.projects)
         .doc(projectUid)
-        .collection(_taskListCollection)
+        .collection(FirebasePath.taskLists)
         .snapshots()
         .map((snapshot) {
           return snapshot.docs.map((doc) {
@@ -23,18 +22,18 @@ class TaskListRemoteDataSource {
 
   Future<void> createTaskList(TaskListModel taskList) {
     return _db
-        .collection(_projectCollection)
+        .collection(FirebasePath.projects)
         .doc(taskList.projectUid)
-        .collection(_taskListCollection)
+        .collection(FirebasePath.taskLists)
         .doc(taskList.uid)
         .set(taskList.toJson());
   }
 
   Future<void> deleteTaskList(String taskListUid, String projectUid) {
     return _db
-        .collection(_projectCollection)
+        .collection(FirebasePath.projects)
         .doc(projectUid)
-        .collection(_taskListCollection)
+        .collection(FirebasePath.taskLists)
         .doc(taskListUid)
         .delete();
   }
@@ -45,9 +44,9 @@ class TaskListRemoteDataSource {
     Map<String, dynamic> fields,
   ) {
     return _db
-        .collection(_projectCollection)
+        .collection(FirebasePath.projects)
         .doc(projectUid)
-        .collection(_taskListCollection)
+        .collection(FirebasePath.taskLists)
         .doc(taskListUid)
         .update(fields);
   }

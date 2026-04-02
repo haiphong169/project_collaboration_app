@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_collaboration_app/utils/firebase_path.dart';
 import 'package:project_collaboration_app/features/project/data/models/project_model.dart';
 
 class ProjectRemoteDataSource {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  static const String _projectsCollection = 'projects';
 
   Stream<List<ProjectModel>> getProjectsStream(String userUid) {
     final projectStream = _db
-        .collection(_projectsCollection)
+        .collection(FirebasePath.projects)
         .where('members', arrayContains: userUid)
         .snapshots()
         .map((snapshot) {
@@ -20,12 +20,12 @@ class ProjectRemoteDataSource {
 
   Future<void> addProject(ProjectModel project) async {
     await _db
-        .collection(_projectsCollection)
+        .collection(FirebasePath.projects)
         .doc(project.uid)
         .set(project.toJson());
   }
 
   Future<void> deleteProject(String projectUid) async {
-    await _db.collection(_projectsCollection).doc(projectUid).delete();
+    await _db.collection(FirebasePath.projects).doc(projectUid).delete();
   }
 }
