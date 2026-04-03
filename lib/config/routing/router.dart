@@ -19,10 +19,12 @@ import 'package:project_collaboration_app/features/project/presentation/bloc/add
 import 'package:project_collaboration_app/features/project/presentation/bloc/archive_screen_cubit.dart';
 import 'package:project_collaboration_app/features/project/presentation/bloc/home_screen_cubit.dart';
 import 'package:project_collaboration_app/features/project/presentation/bloc/project_screen_cubit.dart';
+import 'package:project_collaboration_app/features/project/presentation/bloc/task_cubit.dart';
 import 'package:project_collaboration_app/features/project/presentation/widgets/add_project_screen.dart';
 import 'package:project_collaboration_app/features/project/presentation/widgets/archive_screen.dart';
 import 'package:project_collaboration_app/features/project/presentation/widgets/home_screen.dart';
 import 'package:project_collaboration_app/features/project/presentation/widgets/project_screen.dart';
+import 'package:project_collaboration_app/features/project/presentation/widgets/task_screen.dart';
 import 'package:project_collaboration_app/features/user/domain/usecases/get_user_use_case.dart';
 import 'package:project_collaboration_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:project_collaboration_app/features/auth/domain/usecases/logout_usecase.dart';
@@ -145,8 +147,19 @@ GoRouter router(SessionListenable sessionListenable) {
         path: '${Routes.task}/:taskId',
         builder: (context, state) {
           final taskId = state.pathParameters['taskId']!;
-          // TODO update
-          return Placeholder();
+          final extra =
+              GoRouterState.of(context).extra! as Map<String, dynamic>;
+          return BlocProvider(
+            create:
+                (context) => TaskCubit(
+                  getTaskUseCase: context.read(),
+                  checkTaskUseCase: context.read(),
+                  projectUid: extra['projectUid'] as String,
+                  taskListUid: extra['taskListUid'] as String,
+                  taskUid: taskId,
+                )..fetchTask(),
+            child: TaskScreen(taskName: extra['taskName'] as String),
+          );
         },
       ),
       GoRoute(

@@ -53,7 +53,7 @@ class _ArchiveScreenState extends State<ArchiveScreen> {
                         child: ListTile(
                           title: Text(taskList.name),
                           subtitle: Text(
-                            '${taskList.taskHeaders.length} tasks',
+                            '${taskList.taskHeaders.length} task(s)',
                           ),
                           trailing: ElevatedButton(
                             onPressed: () {

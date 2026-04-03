@@ -320,7 +320,21 @@ class _ProjectScreenState extends State<ProjectScreen> {
               return Colors.transparent;
             }),
           ),
-          Text(header.name),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                context.push(
+                  Routes.taskWithId(header.taskUid),
+                  extra: {
+                    'taskName': header.name,
+                    'projectUid': context.read<ProjectScreenCubit>().projectUid,
+                    'taskListUid': taskListUid,
+                  },
+                );
+              },
+              child: Text(header.name),
+            ),
+          ),
         ],
       ),
     );
