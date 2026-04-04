@@ -233,8 +233,7 @@ GoRouter router(SessionListenable sessionListenable) {
               return BlocProvider(
                 create:
                     (context) => MessageScreenCubit(
-                      getConversationListUseCase:
-                          context.read<GetConversationListUsecase>(),
+                      getConversationPreviewsUseCase: context.read(),
                     )..fetchConversations(),
                 child: MessageScreen(),
               );

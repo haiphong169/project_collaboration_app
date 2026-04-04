@@ -39,4 +39,10 @@ class UserRepositoryImpl extends UserRepository {
         return Result.failure(result.error);
     }
   }
+
+  @override
+  Future<List<User>> getUsersByIds(List<String> uids) async {
+    final modelList = await _userRemoteDataSource.getUsersByIds(uids);
+    return modelList.map((model) => model.toEntity()).toList();
+  }
 }

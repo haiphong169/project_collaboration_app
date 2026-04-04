@@ -26,6 +26,18 @@ class UserRemoteDataSource {
     }
   }
 
+  Future<List<UserModel>> getUsersByIds(List<String> uids) async {
+    final snapshots =
+        await _db
+            .collection(FirebasePath.users)
+            .where(FieldPath.documentId, whereIn: uids)
+            .get();
+
+    return snapshots.docs
+        .map((doc) => UserModel.fromJson(doc.data(), doc.id))
+        .toList();
+  }
+
   Future<VoidResult> saveUser(String uid, UserModel user) async {
     try {
       await _db.collection(FirebasePath.users).doc(uid).set({

@@ -3,7 +3,7 @@ import 'package:project_collaboration_app/features/messaging/domain/entities/mes
 import 'package:project_collaboration_app/utils/result.dart';
 
 abstract class ConversationRepository {
-  Future<Result<Stream<List<Conversation>>>> conversations(String userUid);
+  Stream<List<Conversation>> conversations(String userUid);
   Future<Result<String?>> checkExistingConversation(
     String partnerUid,
     String userUid,

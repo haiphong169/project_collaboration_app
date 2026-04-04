@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_collaboration_app/core/ui/user_circle_avatar.dart';
 import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
 import 'package:project_collaboration_app/features/auth/presentation/bloc/logout_cubit.dart';
 import 'package:project_collaboration_app/features/user/presentation/bloc/user_cubit.dart';
@@ -24,19 +25,7 @@ class ProfileScreen extends StatelessWidget {
                   Success<User>(:final data) => Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CircleAvatar(
-                        radius: 64,
-                        backgroundColor: Color(
-                          data.avatar.backgroundColorValue,
-                        ),
-                        child: Text(
-                          state.data.avatar.initials,
-                          style: TextStyle(
-                            fontSize: 32,
-                            color: Color(state.data.avatar.textColorValue),
-                          ),
-                        ),
-                      ),
+                      UserCircleAvatar(avatar: data.avatar),
                       Text(data.username),
                     ],
                   ),

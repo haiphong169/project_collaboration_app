@@ -9,6 +9,7 @@ import 'package:project_collaboration_app/features/auth/domain/usecases/sign_in_
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/add_conversation_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/check_existing_conversation_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/get_conversation_list_usecase.dart';
+import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/get_conversation_previews_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/message/get_conversation_messages_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/message/send_message_usecase.dart';
 import 'package:project_collaboration_app/features/project/data/data_sources/project_remote_data_source.dart';
@@ -30,6 +31,7 @@ import 'package:project_collaboration_app/features/project/domain/usecases/task_
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/archive_task_list_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/delete_task_list_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task_list/get_task_lists_usecase.dart';
+import 'package:project_collaboration_app/features/user/domain/usecases/get_users_by_uids_usecase.dart';
 import 'package:project_collaboration_app/features/user/domain/usecases/search_user_use_case.dart';
 import 'package:project_collaboration_app/features/user/domain/usecases/get_user_use_case.dart';
 import 'package:project_collaboration_app/features/messaging/data/data_sources/conversation_remote_data_source.dart';
@@ -164,6 +166,12 @@ final repositoryProviders = [
         (context) =>
             GetUserUseCase(sessionProvider: context.read<SessionProvider>()),
   ),
+  RepositoryProvider<GetUsersByUidsUseCase>(
+    create:
+        (context) => GetUsersByUidsUseCase(
+          userRepository: context.read<UserRepository>(),
+        ),
+  ),
   RepositoryProvider<AddConversationUsecase>(
     create:
         (context) => AddConversationUsecase(
@@ -190,6 +198,15 @@ final repositoryProviders = [
     create:
         (context) => GetConversationListUsecase(
           conversationRepository: context.read<ConversationRepository>(),
+          sessionProvider: context.read<SessionProvider>(),
+        ),
+  ),
+  RepositoryProvider<GetConversationPreviewsUseCase>(
+    create:
+        (context) => GetConversationPreviewsUseCase(
+          getConversationListUsecase:
+              context.read<GetConversationListUsecase>(),
+          getUsersByUidsUseCase: context.read<GetUsersByUidsUseCase>(),
           sessionProvider: context.read<SessionProvider>(),
         ),
   ),

@@ -32,22 +32,12 @@ class ConversationRepositoryImpl extends ConversationRepository {
   }
 
   @override
-  Future<Result<Stream<List<Conversation>>>> conversations(
-    String userUid,
-  ) async {
-    final result = await _conversationRemoteDataSource.getConversations(
-      userUid,
+  Stream<List<Conversation>> conversations(String userUid) async* {
+    final modelStream = _conversationRemoteDataSource.getConversations(userUid);
+
+    yield* modelStream.map(
+      (modelList) => modelList.map((model) => model.toEntity()).toList(),
     );
-    switch (result) {
-      case Ok<Stream<List<ConversationModel>>>():
-        return Result.ok(
-          result.data.map(
-            (modelList) => modelList.map((model) => model.toEntity()).toList(),
-          ),
-        );
-      case Failure<Stream<List<ConversationModel>>>():
-        return Result.failure(result.error);
-    }
   }
 
   @override

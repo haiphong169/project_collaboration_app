@@ -2,7 +2,6 @@ import 'package:project_collaboration_app/features/auth/domain/repositories/sess
 import 'package:project_collaboration_app/features/messaging/domain/entities/conversation.dart';
 import 'package:project_collaboration_app/features/messaging/domain/repositories/conversation_repository.dart';
 import 'package:project_collaboration_app/utils/app_exception.dart';
-import 'package:project_collaboration_app/utils/result.dart';
 
 class GetConversationListUsecase {
   final ConversationRepository _conversationRepository;
@@ -14,9 +13,9 @@ class GetConversationListUsecase {
   }) : _conversationRepository = conversationRepository,
        _session = sessionProvider;
 
-  Future<Result<Stream<List<Conversation>>>> call() async {
+  Stream<List<Conversation>> call() {
     final uid = _session.userUid;
-    if (uid == null) return Result.failure(UserNotFoundException());
+    if (uid == null) throw UserNotFoundException();
     return _conversationRepository.conversations(uid);
   }
 }
