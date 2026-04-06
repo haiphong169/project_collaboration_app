@@ -7,25 +7,18 @@ import 'package:project_collaboration_app/utils/result.dart';
 class MessageRemoteDataSource {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<Result<Stream<List<MessageModel>>>> conversationMessages(
-    String conversationUid,
-  ) async {
-    try {
-      final messageStream = _db
-          .collection(FirebasePath.conversations)
-          .doc(conversationUid)
-          .collection(FirebasePath.messages)
-          .orderBy('createdAt', descending: true)
-          .snapshots()
-          .map((snapshot) {
-            return snapshot.docs.map((doc) {
-              return MessageModel.fromJson(doc.data(), doc.id, conversationUid);
-            }).toList();
-          });
-      return Result.ok(messageStream);
-    } on Exception {
-      return Result.failure(FirestoreException());
-    }
+  Stream<List<MessageModel>> conversationMessages(String conversationUid) {
+    return _db
+        .collection(FirebasePath.conversations)
+        .doc(conversationUid)
+        .collection(FirebasePath.messages)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            return MessageModel.fromJson(doc.data(), doc.id, conversationUid);
+          }).toList();
+        });
   }
 
   Future<VoidResult> sendMessage(MessageModel message) async {

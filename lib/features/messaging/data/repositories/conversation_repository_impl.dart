@@ -1,5 +1,4 @@
 import 'package:project_collaboration_app/features/messaging/data/data_sources/conversation_remote_data_source.dart';
-import 'package:project_collaboration_app/features/messaging/data/models/conversation_model.dart';
 import 'package:project_collaboration_app/features/messaging/domain/entities/conversation.dart';
 import 'package:project_collaboration_app/features/messaging/domain/entities/message.dart';
 import 'package:project_collaboration_app/features/messaging/domain/repositories/conversation_repository.dart';

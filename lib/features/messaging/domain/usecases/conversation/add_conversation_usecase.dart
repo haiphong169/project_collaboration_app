@@ -5,7 +5,6 @@ import 'package:project_collaboration_app/features/messaging/domain/repositories
 import 'package:project_collaboration_app/features/messaging/domain/repositories/message_repository.dart';
 import 'package:project_collaboration_app/utils/app_exception.dart';
 import 'package:project_collaboration_app/utils/result.dart';
-import 'package:project_collaboration_app/utils/type_def.dart';
 import 'package:uuid/uuid.dart';
 
 class AddConversationUsecase {
@@ -21,7 +20,7 @@ class AddConversationUsecase {
        _messageRepository = messageRepository,
        _session = sessionProvider;
 
-  Future<Result<(MessageStream, String)>> call(
+  Future<Result<(Stream<List<Message>>, String)>> call(
     String partnerUid,
     String messageText,
   ) async {
@@ -52,12 +51,13 @@ class AddConversationUsecase {
     if (messageResult is Failure<void>) {
       return Result.failure(FirestoreException());
     }
-    final streamResult = await _messageRepository.conversationMessages(
-      conversation.uid,
-    );
-    if (streamResult is Ok<MessageStream>) {
-      return Result.ok((streamResult.data, conversation.uid));
+    try {
+      final streamResult = _messageRepository.conversationMessages(
+        conversation.uid,
+      );
+      return Result.ok((streamResult, conversation.uid));
+    } on Exception {
+      return Result.failure(FirestoreException());
     }
-    return Result.failure(FirestoreException());
   }
 }

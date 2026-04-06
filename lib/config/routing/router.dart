@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:project_collaboration_app/features/auth/domain/repositories/session_provider.dart';
 import 'package:project_collaboration_app/features/inbox/presentation/widgets/inbox_screen.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/add_conversation_usecase.dart';
-import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/get_conversation_list_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/message/get_conversation_messages_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/message/send_message_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/presentation/bloc/chat_event.dart';
@@ -33,6 +32,7 @@ import 'package:project_collaboration_app/features/auth/domain/usecases/sign_in_
 import 'package:project_collaboration_app/features/auth/presentation/bloc/login_cubit.dart';
 import 'package:project_collaboration_app/features/auth/presentation/bloc/logout_cubit.dart';
 import 'package:project_collaboration_app/features/auth/presentation/bloc/register_cubit.dart';
+import 'package:project_collaboration_app/features/user/domain/usecases/get_users_by_uids_usecase.dart';
 import 'package:project_collaboration_app/features/user/domain/usecases/search_user_use_case.dart';
 import 'package:project_collaboration_app/features/user/presentation/bloc/search_user_bloc.dart';
 import 'package:project_collaboration_app/features/user/presentation/bloc/user_cubit.dart';
@@ -163,26 +163,27 @@ GoRouter router(SessionListenable sessionListenable) {
           );
         },
       ),
-      GoRoute(
-        path: '${Routes.mockConversation}/:partnerId',
-        builder: (context, state) {
-          final partnerId = state.pathParameters['partnerId']!;
-          return BlocProvider(
-            create:
-                (context) => MockConversationBloc(
-                  partnerId: partnerId,
-                  addConversationUseCase:
-                      context.read<AddConversationUsecase>(),
-                  sendMessageUseCase: context.read<SendMessageUsecase>(),
-                ),
-            child: MockConversationScreen(),
-          );
-        },
-      ),
+      // GoRoute(
+      //   path: '${Routes.mockConversation}/:partnerId',
+      //   builder: (context, state) {
+      //     final partnerId = state.pathParameters['partnerId']!;
+      //     return BlocProvider(
+      //       create:
+      //           (context) => MockConversationBloc(
+      //             partnerId: partnerId,
+      //             addConversationUseCase:
+      //                 context.read<AddConversationUsecase>(),
+      //             sendMessageUseCase: context.read<SendMessageUsecase>(),
+      //           ),
+      //       child: MockConversationScreen(),
+      //     );
+      //   },
+      // ),
       GoRoute(
         path: '${Routes.conversation}/:conversationId',
         builder: (context, state) {
           final conversationId = state.pathParameters['conversationId']!;
+          final partnerUid = GoRouterState.of(context).extra! as String;
           return BlocProvider(
             create:
                 (context) => ConversationBloc(
@@ -190,7 +191,10 @@ GoRouter router(SessionListenable sessionListenable) {
                   getConversationMessagesUsecase:
                       context.read<GetConversationMessagesUsecase>(),
                   sendMessageUsecase: context.read<SendMessageUsecase>(),
-                )..add(FetchMessages()),
+                  getUsersByUids: context.read<GetUsersByUidsUseCase>(),
+                  sessionProvider: context.read<SessionProvider>(),
+                  partnerUid: partnerUid,
+                )..add(Initialization()),
             child: ConversationScreen(),
           );
         },

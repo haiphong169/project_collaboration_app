@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:project_collaboration_app/features/messaging/domain/entities/conversation_display.dart';
 import 'package:project_collaboration_app/features/messaging/domain/entities/message.dart';
 
 abstract class ChatState extends Equatable {
@@ -13,16 +14,21 @@ class ChatLoading extends ChatState {
 }
 
 class ChatReady extends ChatState {
-  final List<Message> messages;
+  final ConversationDisplay display;
 
-  const ChatReady({required this.messages});
+  const ChatReady({required this.display});
 
   @override
-  List<Object?> get props => [messages];
+  List<Object?> get props => [display];
+}
 
-  ChatReady copyWith({List<Message>? messages}) {
-    return ChatReady(messages: messages ?? this.messages);
-  }
+class ChatSending extends ChatReady {
+  final Message sentMessage;
+
+  const ChatSending({required super.display, required this.sentMessage});
+
+  @override
+  List<Object?> get props => [display, sentMessage];
 }
 
 class ChatError extends ChatState {

@@ -42,6 +42,7 @@ class MessageScreen extends StatelessWidget {
                                     Routes.conversationWithId(
                                       data[index].conversation.uid,
                                     ),
+                                    extra: data[index].user.uid,
                                   );
                                 },
                               ),
