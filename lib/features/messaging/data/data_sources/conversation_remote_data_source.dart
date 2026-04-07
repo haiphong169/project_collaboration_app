@@ -21,47 +21,32 @@ class ConversationRemoteDataSource {
         });
   }
 
-  Future<VoidResult> addConversation(ConversationModel conversation) async {
-    try {
-      await _db
-          .collection(FirebasePath.conversations)
-          .doc(conversation.uid)
-          .set(conversation.toJson());
-      return Result.ok(null);
-    } on Exception {
-      return Result.failure(FirestoreException());
-    }
+  Future<void> addConversation(ConversationModel conversation) async {
+    return _db
+        .collection(FirebasePath.conversations)
+        .doc(conversation.uid)
+        .set(conversation.toJson());
   }
 
-  Future<VoidResult> deleteConversation(String conversationUid) async {
-    try {
-      await _db
-          .collection(FirebasePath.conversations)
-          .doc(conversationUid)
-          .delete();
-      return Result.ok(null);
-    } on Exception {
-      return Result.failure(FirestoreException());
-    }
+  Future<void> deleteConversation(String conversationUid) {
+    return _db
+        .collection(FirebasePath.conversations)
+        .doc(conversationUid)
+        .delete();
   }
 
-  Future<VoidResult> updateConversation(
+  Future<void> updateConversation(
     String conversationUid,
     MessageModel message,
-  ) async {
-    try {
-      await _db
-          .collection(FirebasePath.conversations)
-          .doc(conversationUid)
-          .update({
-            'lastMessage': message.text,
-            'lastMessageAt': Timestamp.fromDate(message.createdAt),
-            'lastMessageSenderUid': message.senderUid,
-          });
-      return Result.ok(null);
-    } on Exception {
-      return Result.failure(FirestoreException());
-    }
+  ) {
+    return _db
+        .collection(FirebasePath.conversations)
+        .doc(conversationUid)
+        .update({
+          'lastMessage': message.text,
+          'lastMessageAt': Timestamp.fromDate(message.createdAt),
+          'lastMessageSenderUid': message.senderUid,
+        });
   }
 
   Future<Result<String?>> checkExistingConversation(

@@ -21,7 +21,7 @@
 //     on<MessageSent>(_sendMessage);
 
 //     on<MessageUpdated>(
-//       (event, emit) => emit(ChatReady(messages: event.messages)),
+//       (event, emit) => emit(ChatReady(display: event.display)),
 //     );
 
 //     on<MessageError>((event, emit) => emit(ChatError(event.message)));
@@ -41,16 +41,14 @@
 
 //     final result = await _addConversationUsecase(partnerId, event.text);
 
-//     switch (result) {
-//       case Ok<(MessageStream, String)>():
-//         conversationId = result.data.$2;
+    
+//         conversationId = result.$2;
 //         _subscription?.cancel();
-//         _subscription = result.data.$1.listen(
+//         _subscription = result.$1.listen(
 //           (messages) => add(MessageUpdated(messages)),
 //           onError: (e) => add(MessageError(e.toString())),
 //         );
-//       case Failure<(MessageStream, String)>():
-//         emit(ChatError(result.error.message));
+      
 //     }
 //   }
 

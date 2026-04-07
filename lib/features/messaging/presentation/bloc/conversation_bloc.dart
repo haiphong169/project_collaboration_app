@@ -8,10 +8,8 @@ import 'package:project_collaboration_app/features/messaging/domain/usecases/mes
 import 'package:project_collaboration_app/features/messaging/domain/usecases/message/send_message_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/presentation/bloc/chat_event.dart';
 import 'package:project_collaboration_app/features/messaging/presentation/bloc/chat_state.dart';
-import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
 import 'package:project_collaboration_app/features/user/domain/usecases/get_users_by_uids_usecase.dart';
 import 'package:project_collaboration_app/utils/app_exception.dart';
-import 'package:project_collaboration_app/utils/result.dart';
 
 class ConversationBloc extends Bloc<ChatEvent, ChatState> {
   ConversationBloc({
@@ -74,10 +72,11 @@ class ConversationBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Future<void> _sendMessage(MessageSent event, Emitter<ChatState> emit) async {
-    emit(const ChatLoading());
-    final result = await _sendMessageUsecase(event.text, conversationId);
-    if (result is Failure<void>) {
-      emit(ChatError(result.error.message));
+    try {
+      emit(const ChatLoading());
+      await _sendMessageUsecase(event.text, conversationId);
+    } on Exception {
+      emit(ChatError("Can't send message."));
     }
   }
 

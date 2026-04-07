@@ -8,9 +8,9 @@ abstract class ConversationRepository {
     String partnerUid,
     String userUid,
   );
-  Future<VoidResult> addConversation(Conversation conversation);
-  Future<VoidResult> deleteConversation(String conversationUid);
-  Future<VoidResult> updateConversation(
+  Future<void> addConversation(Conversation conversation);
+  Future<void> deleteConversation(String conversationUid);
+  Future<void> updateConversation(
     String conversationUid,
     Message newLastMessage,
   );

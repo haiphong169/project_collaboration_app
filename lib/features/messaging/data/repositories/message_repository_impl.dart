@@ -2,7 +2,6 @@ import 'package:project_collaboration_app/features/messaging/data/data_sources/m
 import 'package:project_collaboration_app/features/messaging/domain/entities/message.dart';
 import 'package:project_collaboration_app/features/messaging/domain/repositories/message_repository.dart';
 import 'package:project_collaboration_app/utils/mapper_extension.dart';
-import 'package:project_collaboration_app/utils/result.dart';
 
 class MessageRepositoryImpl implements MessageRepository {
   final MessageRemoteDataSource _messageRemoteDataSource;
@@ -23,13 +22,12 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<VoidResult> deleteMessage(String messageUid) {
-    // TODO: implement deleteMessage
-    throw UnimplementedError();
+  Future<void> deleteMessage(String conversationUid, String messageUid) {
+    return _messageRemoteDataSource.deleteMessage(conversationUid, messageUid);
   }
 
   @override
-  Future<VoidResult> sendMessage(Message message) {
+  Future<void> sendMessage(Message message) {
     return _messageRemoteDataSource.sendMessage(message.toModel());
   }
 }

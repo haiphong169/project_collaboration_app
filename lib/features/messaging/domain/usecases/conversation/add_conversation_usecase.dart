@@ -3,8 +3,6 @@ import 'package:project_collaboration_app/features/messaging/domain/entities/con
 import 'package:project_collaboration_app/features/messaging/domain/entities/message.dart';
 import 'package:project_collaboration_app/features/messaging/domain/repositories/conversation_repository.dart';
 import 'package:project_collaboration_app/features/messaging/domain/repositories/message_repository.dart';
-import 'package:project_collaboration_app/utils/app_exception.dart';
-import 'package:project_collaboration_app/utils/result.dart';
 import 'package:uuid/uuid.dart';
 
 class AddConversationUsecase {
@@ -20,26 +18,20 @@ class AddConversationUsecase {
        _messageRepository = messageRepository,
        _session = sessionProvider;
 
-  Future<Result<(Stream<List<Message>>, String)>> call(
+  Future<(Stream<List<Message>>, String)> call(
     String partnerUid,
     String messageText,
   ) async {
     // create conversation -> create first message -> return stream of conversation
     final userUid = _session.userUid;
-    if (userUid == null) return Result.failure(UserNotFoundException());
     final conversation = Conversation(
       uid: Uuid().v4(),
-      participants: [userUid, partnerUid],
+      participants: [userUid!, partnerUid],
       lastMessage: messageText,
       lastMessageAt: DateTime.now(),
       lastMessageSenderUid: userUid,
     );
-    final conversationResult = await _conversationRepository.addConversation(
-      conversation,
-    );
-    if (conversationResult is Failure<void>) {
-      return Result.failure(FirestoreException());
-    }
+    await _conversationRepository.addConversation(conversation);
     final firstMessage = Message(
       uid: Uuid().v4(),
       conversationUid: conversation.uid,
@@ -47,17 +39,10 @@ class AddConversationUsecase {
       text: messageText,
       createdAt: conversation.lastMessageAt,
     );
-    final messageResult = await _messageRepository.sendMessage(firstMessage);
-    if (messageResult is Failure<void>) {
-      return Result.failure(FirestoreException());
-    }
-    try {
-      final streamResult = _messageRepository.conversationMessages(
-        conversation.uid,
-      );
-      return Result.ok((streamResult, conversation.uid));
-    } on Exception {
-      return Result.failure(FirestoreException());
-    }
+    await _messageRepository.sendMessage(firstMessage);
+    return (
+      _messageRepository.conversationMessages(conversation.uid),
+      conversation.uid,
+    );
   }
 }

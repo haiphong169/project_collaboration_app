@@ -13,7 +13,7 @@ class ConversationRepositoryImpl extends ConversationRepository {
   }) : _conversationRemoteDataSource = conversationRemoteDataSource;
 
   @override
-  Future<VoidResult> addConversation(Conversation conversation) {
+  Future<void> addConversation(Conversation conversation) {
     return _conversationRemoteDataSource.addConversation(
       conversation.toModel(),
     );
@@ -40,12 +40,12 @@ class ConversationRepositoryImpl extends ConversationRepository {
   }
 
   @override
-  Future<VoidResult> deleteConversation(String conversationUid) {
+  Future<void> deleteConversation(String conversationUid) {
     return _conversationRemoteDataSource.deleteConversation(conversationUid);
   }
 
   @override
-  Future<VoidResult> updateConversation(
+  Future<void> updateConversation(
     String conversationUid,
     Message newLastMessage,
   ) {
