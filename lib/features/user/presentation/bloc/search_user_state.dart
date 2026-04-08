@@ -20,5 +20,6 @@ class SearchError extends SearchUserState {
 
 class OnNavigation extends SearchUserState {
   final String route;
-  OnNavigation(this.route);
+  final Object? extra;
+  OnNavigation(this.route, [this.extra]);
 }

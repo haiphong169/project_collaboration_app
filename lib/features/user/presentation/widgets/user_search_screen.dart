@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:project_collaboration_app/core/ui/user_circle_avatar.dart';
 import 'package:project_collaboration_app/features/user/presentation/bloc/search_user_bloc.dart';
 import 'package:project_collaboration_app/features/user/presentation/bloc/search_user_event.dart';
 import 'package:project_collaboration_app/features/user/presentation/bloc/search_user_state.dart';
@@ -42,7 +43,7 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
         listener: (context, state) {
           if (state is OnNavigation) {
             if (mounted) {
-              context.push(state.route);
+              context.push(state.route, extra: state.extra);
             }
           }
         },
@@ -84,7 +85,14 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
                           itemBuilder: (_, i) {
                             final user = state.users[i];
                             return ListTile(
-                              title: Text(user.username),
+                              leading: UserCircleAvatar(
+                                avatar: user.avatar,
+                                radius: 24,
+                              ),
+                              title: Text(
+                                user.username,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
                               onTap: () {
                                 context.read<SearchUserBloc>().add(
                                   ResultTapped(user.uid),

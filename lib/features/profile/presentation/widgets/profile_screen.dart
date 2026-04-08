@@ -14,8 +14,8 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: 60),
             BlocBuilder<UserCubit, UiState<User>>(
               bloc: context.read<UserCubit>(),
               builder: (context, state) {
@@ -26,7 +26,11 @@ class ProfileScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       UserCircleAvatar(avatar: data.avatar),
-                      Text(data.username),
+                      SizedBox(height: 16),
+                      Text(
+                        data.username,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                     ],
                   ),
                   Idle<User>() => SizedBox(),
@@ -34,6 +38,7 @@ class ProfileScreen extends StatelessWidget {
                 };
               },
             ),
+            SizedBox(height: 80),
             BlocBuilder<LogoutCubit, VoidUiState>(
               bloc: context.read<LogoutCubit>(),
               builder: (context, state) {
@@ -43,13 +48,38 @@ class ProfileScreen extends StatelessWidget {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ElevatedButton(
-                      onPressed:
+                    InkWell(
+                      onTap:
                           isLoading ? null : context.read<LogoutCubit>().logout,
-                      child:
-                          isLoading
-                              ? const CircularProgressIndicator()
-                              : const Text('Logout'),
+                      child: Container(
+                        color:
+                            Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 24,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children:
+                                isLoading
+                                    ? [CircularProgressIndicator()]
+                                    : [
+                                      Text(
+                                        'Log out',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.titleMedium,
+                                      ),
+                                      Spacer(),
+                                      Icon(Icons.logout),
+                                    ],
+                          ),
+                        ),
+                      ),
                     ),
                     if (isError) ...[
                       const SizedBox(height: 8),

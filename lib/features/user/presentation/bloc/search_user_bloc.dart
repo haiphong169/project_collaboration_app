@@ -42,7 +42,9 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState> {
       case Ok<String?>(:final data):
         if (origin == Routes.messages) {
           if (data != null) {
-            emit(OnNavigation(Routes.conversationWithId(data)));
+            emit(
+              OnNavigation(Routes.conversationWithId(data), event.resultUid),
+            );
           } else {
             emit(OnNavigation(Routes.mockConversationWithId(event.resultUid)));
           }
