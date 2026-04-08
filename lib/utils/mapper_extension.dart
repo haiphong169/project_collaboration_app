@@ -58,6 +58,7 @@ extension ProjectMapper on Project {
       name: name,
       backgroundColorValue: backgroundColorValue,
       members: members,
+      ownerUid: ownerUid,
     );
   }
 }

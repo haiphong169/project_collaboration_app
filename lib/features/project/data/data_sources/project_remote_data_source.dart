@@ -25,8 +25,8 @@ class ProjectRemoteDataSource {
         .set(project.toJson());
   }
 
-  Future<void> deleteProject(String projectUid) async {
-    await _db.collection(FirebasePath.projects).doc(projectUid).delete();
+  Future<void> deleteProject(String projectUid) {
+    return _db.collection(FirebasePath.projects).doc(projectUid).delete();
   }
 
   Future<void> inviteUser({
@@ -42,5 +42,14 @@ class ProjectRemoteDataSource {
     final doc =
         await _db.collection(FirebasePath.projects).doc(projectUid).get();
     return ProjectModel.fromJson(doc.data()!, doc.id);
+  }
+
+  Future<void> leaveProject({
+    required String userUid,
+    required String projectUid,
+  }) {
+    return _db.collection(FirebasePath.projects).doc(projectUid).update({
+      'members': FieldValue.arrayRemove([userUid]),
+    });
   }
 }

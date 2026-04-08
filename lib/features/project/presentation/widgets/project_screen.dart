@@ -42,6 +42,8 @@ class _ProjectScreenState extends State<ProjectScreen> {
                 backgroundColor: Colors.red,
               ),
             );
+          } else if (state is OnNavigationPop<List<TaskList>>) {
+            context.pop();
           }
         },
         child: BlocBuilder<ProjectScreenCubit, UiState<List<TaskList>>>(
@@ -362,6 +364,7 @@ class _ProjectScreenState extends State<ProjectScreen> {
   }
 
   Widget _projectOptionsButton() {
+    final isOwner = context.read<ProjectScreenCubit>().isOwner;
     return PopupMenuButton(
       icon: Icon(Icons.more_vert),
       onSelected: (value) {
@@ -382,12 +385,27 @@ class _ProjectScreenState extends State<ProjectScreen> {
               ),
             );
             break;
+          case 'delete':
+            context.read<ProjectScreenCubit>().deleteProject();
+            break;
+          case 'leave':
+            context.read<ProjectScreenCubit>().leaveProject();
+            break;
         }
       },
       itemBuilder: (context) {
         return [
           PopupMenuItem(value: 'invite', child: Text('Invite collaborators')),
           PopupMenuItem(value: 'archived_lists', child: Text('Archived lists')),
+          isOwner
+              ? PopupMenuItem(
+                value: 'delete',
+                child: Text(
+                  'Delete project',
+                  style: TextStyle(color: Colors.red),
+                ),
+              )
+              : PopupMenuItem(value: 'leave', child: Text('Leave project')),
         ];
       },
     );

@@ -104,6 +104,7 @@ class HomeScreen extends StatelessWidget {
                 extra: {
                   'projectName': project.name,
                   'backgroundColorValue': project.backgroundColorValue,
+                  'ownerUid': project.ownerUid,
                 },
               );
             },

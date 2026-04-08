@@ -13,12 +13,15 @@ class ProjectModel {
   final int backgroundColorValue;
   @HiveField(3)
   final List<String> members;
+  @HiveField(4)
+  final String ownerUid;
 
   const ProjectModel({
     required this.uid,
     required this.name,
     required this.backgroundColorValue,
     required this.members,
+    required this.ownerUid,
   });
 
   factory ProjectModel.fromJson(Map<String, dynamic> map, String uid) {
@@ -27,6 +30,7 @@ class ProjectModel {
       name: map['name'] as String,
       backgroundColorValue: map['backgroundColorValue'] as int,
       members: List<String>.from(map['members'] as List<dynamic>),
+      ownerUid: map['ownerUid'] as String,
     );
   }
 
@@ -35,6 +39,7 @@ class ProjectModel {
       'name': name,
       'backgroundColorValue': backgroundColorValue,
       'members': members,
+      'ownerUid': ownerUid,
     };
   }
 
@@ -44,6 +49,7 @@ class ProjectModel {
       name: name,
       backgroundColorValue: backgroundColorValue,
       members: members,
+      ownerUid: ownerUid,
     );
   }
 }

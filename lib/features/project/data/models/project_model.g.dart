@@ -21,13 +21,14 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
       name: fields[1] as String,
       backgroundColorValue: fields[2] as int,
       members: (fields[3] as List).cast<String>(),
+      ownerUid: fields[4] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProjectModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.uid)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
       ..writeByte(2)
       ..write(obj.backgroundColorValue)
       ..writeByte(3)
-      ..write(obj.members);
+      ..write(obj.members)
+      ..writeByte(4)
+      ..write(obj.ownerUid);
   }
 
   @override

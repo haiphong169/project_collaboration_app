@@ -22,9 +22,11 @@ import 'package:project_collaboration_app/features/project/domain/repositories/p
 import 'package:project_collaboration_app/features/project/domain/repositories/task_list_repository.dart';
 import 'package:project_collaboration_app/features/project/domain/repositories/task_repository.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/project/add_project_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/project/delete_project_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/project/get_project_by_uid_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/project/get_projects_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/project/invite_user_usercase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/project/leave_project_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/add_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/check_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/delete_task_usecase.dart';
@@ -286,6 +288,15 @@ final repositoryProviders = [
   RepositoryProvider<GetProjectByUidUseCase>(
     create:
         (context) => GetProjectByUidUseCase(context.read<ProjectRepository>()),
+  ),
+  RepositoryProvider<DeleteProjectUsecase>(
+    create:
+        (context) => DeleteProjectUsecase(
+          projectRepository: context.read<ProjectRepository>(),
+        ),
+  ),
+  RepositoryProvider<LeaveProjectUseCase>(
+    create: (context) => LeaveProjectUseCase(context.read<ProjectRepository>()),
   ),
 ];
 

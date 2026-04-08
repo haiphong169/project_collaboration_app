@@ -70,7 +70,6 @@ class UserRemoteDataSource {
             .toList(),
       );
     } on Exception catch (e) {
-      AppLogger().e(e);
       return Result.failure(FirestoreException());
     }
   }

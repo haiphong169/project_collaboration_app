@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_collaboration_app/features/messaging/domain/entities/conversation_preview.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/get_conversation_previews_usecase.dart';
-import 'package:project_collaboration_app/utils/logger.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 
 class MessageScreenCubit extends Cubit<UiState<List<ConversationPreview>>> {
@@ -25,7 +24,6 @@ class MessageScreenCubit extends Cubit<UiState<List<ConversationPreview>>> {
         onError: (e) => emit(UiState.error(e.toString())),
       );
     } on Exception catch (e) {
-      AppLogger().e(e.toString());
       emit(UiState.error(e.toString()));
     }
   }

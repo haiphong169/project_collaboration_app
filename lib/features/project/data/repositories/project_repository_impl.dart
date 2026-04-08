@@ -20,13 +20,13 @@ class ProjectRepositoryImpl implements ProjectRepository {
   }
 
   @override
-  Future<void> createProject(Project project) async {
-    await _projectRemoteDataSource.addProject(project.toModel());
+  Future<void> createProject(Project project) {
+    return _projectRemoteDataSource.addProject(project.toModel());
   }
 
   @override
-  Future<void> deleteProject(String uid) async {
-    throw UnimplementedError();
+  Future<void> deleteProject(String projectUid) {
+    return _projectRemoteDataSource.deleteProject(projectUid);
   }
 
   @override
@@ -49,5 +49,16 @@ class ProjectRepositoryImpl implements ProjectRepository {
   Future<Project> getProjectById(String projectUid) async {
     final model = await _projectRemoteDataSource.getProjectById(projectUid);
     return model.toEntity();
+  }
+
+  @override
+  Future<void> leaveProject({
+    required String userUid,
+    required String projectUid,
+  }) {
+    return _projectRemoteDataSource.leaveProject(
+      userUid: userUid,
+      projectUid: projectUid,
+    );
   }
 }

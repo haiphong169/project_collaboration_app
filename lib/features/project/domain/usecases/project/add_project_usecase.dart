@@ -14,7 +14,7 @@ class AddProjectUseCase {
   }) : _projectRepository = projectRepository,
        _session = sessionProvider;
 
-  Future<void> call(String name, int backgroundColorValue) async {
+  Future<void> call(String name, int backgroundColorValue) {
     final userUid = _session.userUid;
     if (userUid == null) throw UserNotFoundException();
 
@@ -23,8 +23,9 @@ class AddProjectUseCase {
       name: name,
       backgroundColorValue: backgroundColorValue,
       members: [userUid],
+      ownerUid: userUid,
     );
 
-    await _projectRepository.createProject(project);
+    return _projectRepository.createProject(project);
   }
 }

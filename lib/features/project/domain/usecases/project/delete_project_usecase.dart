@@ -6,7 +6,7 @@ class DeleteProjectUsecase {
   DeleteProjectUsecase({required ProjectRepository projectRepository})
     : _projectRepository = projectRepository;
 
-  Future<void> call(String uid) async {
-    return await _projectRepository.deleteProject(uid);
+  Future<void> call(String projectUid) {
+    return _projectRepository.deleteProject(projectUid);
   }
 }

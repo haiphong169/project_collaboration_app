@@ -112,6 +112,7 @@ GoRouter router(SessionListenable sessionListenable) {
               GoRouterState.of(context).extra! as Map<String, dynamic>;
           final projectName = extra['projectName'] as String;
           final backgroundColorValue = extra['backgroundColorValue'] as int;
+          final ownerUid = extra['ownerUid'] as String;
           return BlocProvider(
             create:
                 (context) => ProjectScreenCubit(
@@ -121,6 +122,10 @@ GoRouter router(SessionListenable sessionListenable) {
                   addTaskUseCase: context.read(),
                   checkTaskUseCase: context.read(),
                   archiveTaskListUseCase: context.read(),
+                  deleteProjectUsecase: context.read(),
+                  leaveProjectUsecase: context.read(),
+                  sessionProvider: context.read(),
+                  ownerUid: ownerUid,
                   projectUid: id,
                 )..fetchTaskLists(),
             child: ProjectScreen(
