@@ -1,12 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_collaboration_app/features/auth/domain/repositories/session_provider.dart';
+import 'package:project_collaboration_app/features/project/domain/repositories/task_repository.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/project/get_project_by_uid_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/assign_user_to_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/check_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/delete_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/get_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/presentation/ui_models/task_ui_model.dart';
-import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
 import 'package:project_collaboration_app/features/user/domain/usecases/get_users_by_uids_usecase.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 
@@ -19,6 +19,7 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
     required GetUsersByUidsUseCase getUsersByUidsUseCase,
     required SessionProvider sessionProvider,
     required GetProjectByUidUseCase getProjectByUidUsecase,
+    required TaskRepository taskRepository,
   }) : _getTaskUseCase = getTaskUseCase,
        _checkTaskUseCase = checkTaskUseCase,
        _deleteTaskUseCase = deleteTaskUseCase,
@@ -26,6 +27,7 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
        _getUsersByUidsUseCase = getUsersByUidsUseCase,
        _session = sessionProvider,
        _getProjectByUid = getProjectByUidUsecase,
+       _taskRepository = taskRepository,
        super(UiState.idle());
 
   final GetTaskUseCase _getTaskUseCase;
@@ -35,6 +37,7 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
   final GetUsersByUidsUseCase _getUsersByUidsUseCase;
   final SessionProvider _session;
   final GetProjectByUidUseCase _getProjectByUid;
+  final TaskRepository _taskRepository;
 
   Future<void> fetchTask(
     String projectUid,
@@ -119,6 +122,32 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
     } on Exception catch (e) {
       emit(UiState.error(e.toString()));
       emit(previousState);
+    }
+  }
+
+  void updateTaskDescription(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String newDescription,
+  ) {
+    final previousData = state.getData();
+    if (previousData == null) return;
+    final previousTask = previousData.task;
+
+    try {
+      _taskRepository.updateTaskFields(projectUid, taskListUid, taskUid, {
+        'description': newDescription,
+      });
+      emit(
+        UiState.success(
+          previousData.copyWith(
+            task: previousTask.copyWith(description: newDescription),
+          ),
+        ),
+      );
+    } on Exception catch (e) {
+      emit(UiState.error(e.toString(), previousData));
     }
   }
 }

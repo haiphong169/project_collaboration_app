@@ -5,11 +5,26 @@ typedef VoidUiState = UiState<void>;
 sealed class UiState<T> {
   const UiState();
 
-  const factory UiState.loading([T data]) = Loading._;
+  const factory UiState.loading([T? data]) = Loading._;
   const factory UiState.success(T data) = Success._;
-  const factory UiState.error(String message, [T data]) = Error._;
+  const factory UiState.error(String message, [T? data]) = Error._;
   const factory UiState.idle() = Idle._;
   const factory UiState.onNavigationPop() = OnNavigationPop._;
+
+  T? getData() {
+    switch (this) {
+      case Loading<T>(:final data):
+        return data;
+      case Success<T>(:final data):
+        return data;
+      case Error<T>(:final data):
+        return data;
+      case Idle<T>():
+        return null;
+      case OnNavigationPop<T>():
+        return null;
+    }
+  }
 }
 
 final class Loading<T> extends UiState<T> with EquatableMixin {

@@ -17,6 +17,8 @@ class TaskModel {
   final bool isCompleted;
   @HiveField(5)
   final List<String> assignees;
+  @HiveField(6)
+  final String? description;
 
   const TaskModel({
     required this.uid,
@@ -25,6 +27,7 @@ class TaskModel {
     required this.name,
     required this.isCompleted,
     required this.assignees,
+    this.description,
   });
 
   factory TaskModel.fromJson(
@@ -40,11 +43,17 @@ class TaskModel {
       name: map['name'] as String,
       isCompleted: map['isCompleted'] as bool,
       assignees: List<String>.from(map['assignees'] as List<dynamic>),
+      description: map['description'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'name': name, 'isCompleted': isCompleted, 'assignees': assignees};
+    return {
+      'name': name,
+      'isCompleted': isCompleted,
+      'assignees': assignees,
+      'description': description,
+    };
   }
 
   Task toEntity() {
@@ -55,6 +64,7 @@ class TaskModel {
       name: name,
       isCompleted: isCompleted,
       assignees: assignees,
+      description: description,
     );
   }
 }

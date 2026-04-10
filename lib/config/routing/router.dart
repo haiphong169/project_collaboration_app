@@ -169,6 +169,7 @@ GoRouter router(SessionListenable sessionListenable) {
                   getUsersByUidsUseCase: context.read(),
                   getProjectByUidUsecase: context.read(),
                   sessionProvider: context.read(),
+                  taskRepository: context.read(),
                 )..fetchTask(projectUid, taskListUid, taskUid),
             child: TaskScreen(
               taskName: extra['taskName'] as String,

@@ -24,10 +24,26 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
+  late final TextEditingController _descriptionController;
+  bool _isEditingDescription = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _descriptionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TaskCubit, UiState<TaskUiModel>>(
       listener: (context, state) {
+        _descriptionController.text = state.getData()?.task.description ?? '';
         if (state is Error<TaskUiModel>) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
@@ -120,10 +136,86 @@ class _TaskScreenState extends State<TaskScreen> {
             ),
           ),
           SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.only(left: 8, bottom: 8),
-            child: Text('Assignees', style: textTheme.titleMedium),
+          Container(
+            color: colorScheme.surfaceContainerHighest,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              child: Row(
+                children: [
+                  Icon(Icons.short_text),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      controller: _descriptionController,
+                      onTap: () {
+                        setState(() {
+                          _isEditingDescription = true;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue, width: 2),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        hint: Padding(
+                          padding: const EdgeInsets.only(bottom: 48),
+                          child: Text(
+                            'Add task description',
+                            style: textTheme.labelLarge,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  SizedBox(
+                    width: 48,
+                    child:
+                        _isEditingDescription
+                            ? Column(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<TaskCubit>()
+                                        .updateTaskDescription(
+                                          widget.projectUid,
+                                          widget.taskListUid,
+                                          widget.taskUid,
+                                          _descriptionController.text,
+                                        );
+                                    FocusScope.of(context).unfocus();
+                                    setState(() {
+                                      _isEditingDescription = false;
+                                    });
+                                  },
+                                  icon: Icon(Icons.check, color: Colors.green),
+                                ),
+                                SizedBox(height: 16),
+                                IconButton(
+                                  onPressed: () async {
+                                    _descriptionController.text =
+                                        model.task.description ?? '';
+                                    FocusScope.of(context).unfocus();
+                                    setState(() {
+                                      _isEditingDescription = false;
+                                    });
+                                  },
+                                  icon: Icon(Icons.close),
+                                  color: Colors.red,
+                                ),
+                              ],
+                            )
+                            : null,
+                  ),
+                ],
+              ),
+            ),
           ),
+          SizedBox(height: 24),
           Align(
             alignment: Alignment.centerRight,
             child: Padding(
@@ -145,13 +237,14 @@ class _TaskScreenState extends State<TaskScreen> {
               ),
             ),
           ),
-          Card(
+          Container(
+            color: colorScheme.surfaceContainerHighest,
             child:
                 model.assignees.isEmpty
                     ? Center(
                       child: SizedBox(
-                        height: 50,
-                        child: Text('No assginees yet.'),
+                        height: 100,
+                        child: Center(child: Text('No assginees yet.')),
                       ),
                     )
                     : Padding(

@@ -96,6 +96,7 @@ extension TaskMapper on Task {
       name: name,
       isCompleted: isCompleted,
       assignees: assignees,
+      description: description,
     );
   }
 }
