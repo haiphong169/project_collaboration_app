@@ -1,72 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:project_collaboration_app/features/project/domain/entities/task.dart';
+import 'package:project_collaboration_app/core/ui/user_circle_avatar.dart';
 import 'package:project_collaboration_app/features/project/presentation/bloc/task_cubit.dart';
+import 'package:project_collaboration_app/features/project/presentation/ui_models/task_ui_model.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 
-class TaskScreen extends StatelessWidget {
-  TaskScreen({super.key, required this.taskName});
+class TaskScreen extends StatefulWidget {
+  const TaskScreen({
+    super.key,
+    required this.taskName,
+    required this.projectUid,
+    required this.taskListUid,
+    required this.taskUid,
+  });
   final String taskName;
-  Task? latestTask;
+  final String projectUid;
+  final String taskListUid;
+  final String taskUid;
 
   @override
+  State<TaskScreen> createState() => _TaskScreenState();
+}
+
+class _TaskScreenState extends State<TaskScreen> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(taskName),
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.read<TaskCubit>().deleteTask();
-            },
-            icon: Icon(Icons.delete),
-          ),
-        ],
-      ),
-      body: BlocListener<TaskCubit, UiState<Task>>(
-        listener: (context, state) {
-          if (state is Error<Task>) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
+    return BlocConsumer<TaskCubit, UiState<TaskUiModel>>(
+      listener: (context, state) {
+        if (state is Error<TaskUiModel>) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
+          );
+        } else if (state is OnNavigationPop<TaskUiModel>) {
+          context.pop();
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(widget.taskName),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.read<TaskCubit>().deleteTask(
+                    widget.projectUid,
+                    widget.taskListUid,
+                    widget.taskUid,
+                  );
+                },
+                icon: Icon(Icons.delete),
               ),
-            );
-          } else if (state is OnNavigationPop<Task>) {
-            context.pop();
-          } else if (state is Success<Task>) {
-            latestTask = state.data;
-          }
-        },
-        child: BlocBuilder<TaskCubit, UiState<Task>>(
-          builder: (context, state) {
-            return Stack(
-              children: [
-                if (state is Success<Task>) ...[
-                  _taskDetails(context, state.data),
-                ] else if (state is Loading<Task>) ...[
-                  latestTask != null
-                      ? _taskDetails(context, latestTask!)
-                      : SizedBox(),
-                  Align(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator(),
-                  ),
-                ],
+            ],
+          ),
+          body: Stack(
+            children: [
+              if (state is Success<TaskUiModel>) ...[
+                _taskDetails(context, state.data),
+              ] else if (state is Loading<TaskUiModel>) ...[
+                state.data != null
+                    ? _taskDetails(context, state.data!)
+                    : SizedBox(),
+                Align(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(),
+                ),
               ],
-            );
-          },
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _taskDetails(BuildContext context, Task task) {
+  Widget _taskDetails(BuildContext context, TaskUiModel model) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 32),
           Container(
@@ -76,10 +88,15 @@ class TaskScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Checkbox(
-                    value: task.isCompleted,
+                    value: model.task.isCompleted,
                     onChanged: (newValue) {
                       if (newValue != null) {
-                        context.read<TaskCubit>().checkTask(newValue);
+                        context.read<TaskCubit>().checkTask(
+                          widget.projectUid,
+                          widget.taskListUid,
+                          widget.taskUid,
+                          newValue,
+                        );
                       }
                     },
                     shape: CircleBorder(),
@@ -93,7 +110,7 @@ class TaskScreen extends StatelessWidget {
                   ),
                   SizedBox(width: 16),
                   Text(
-                    task.name,
+                    model.task.name,
                     style: textTheme.titleLarge,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -101,6 +118,85 @@ class TaskScreen extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+          SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.only(left: 8, bottom: 8),
+            child: Text('Assignees', style: textTheme.titleMedium),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8, bottom: 16),
+              child: TextButton(
+                onPressed: () {
+                  if (model.isOwner) {
+                  } else {
+                    context.read<TaskCubit>().assignTaskToMyself(
+                      widget.projectUid,
+                      widget.taskListUid,
+                      widget.taskUid,
+                      model.assignees.contains(model.currentUser)
+                          ? false
+                          : true,
+                    );
+                  }
+                },
+                child: Text(
+                  model.isOwner
+                      ? '+ Assign'
+                      : model.assignees.contains(model.currentUser)
+                      ? 'Unassign myself'
+                      : 'Assign myself',
+                ),
+              ),
+            ),
+          ),
+          Card(
+            child:
+                model.assignees.isEmpty
+                    ? Center(
+                      child: SizedBox(
+                        height: 50,
+                        child: Text('No assginees yet.'),
+                      ),
+                    )
+                    : Padding(
+                      padding: const EdgeInsets.only(
+                        left: 8,
+                        right: 8,
+                        top: 16,
+                        bottom: 16,
+                      ),
+                      child: SizedBox(
+                        height: 200,
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          padding: EdgeInsets.zero,
+                          children:
+                              model.assignees
+                                  .map(
+                                    (assignee) => Row(
+                                      children: [
+                                        UserCircleAvatar(
+                                          avatar: assignee.avatar,
+                                          radius: 32,
+                                        ),
+                                        SizedBox(width: 16),
+                                        Text(
+                                          assignee.username,
+                                          style:
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.titleMedium,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      ),
+                    ),
           ),
         ],
       ),

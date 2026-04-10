@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project_collaboration_app/features/auth/domain/repositories/session_provider.dart';
+import 'package:project_collaboration_app/features/inbox/presentation/bloc/inbox_cubit.dart';
 import 'package:project_collaboration_app/features/inbox/presentation/widgets/inbox_screen.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/add_conversation_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/message/get_conversation_messages_usecase.dart';
@@ -153,20 +154,28 @@ GoRouter router(SessionListenable sessionListenable) {
       GoRoute(
         path: '${Routes.task}/:taskId',
         builder: (context, state) {
-          final taskId = state.pathParameters['taskId']!;
+          final taskUid = state.pathParameters['taskId']!;
           final extra =
               GoRouterState.of(context).extra! as Map<String, dynamic>;
+          final projectUid = extra['projectUid'] as String;
+          final taskListUid = extra['taskListUid'] as String;
           return BlocProvider(
             create:
                 (context) => TaskCubit(
                   getTaskUseCase: context.read(),
                   checkTaskUseCase: context.read(),
                   deleteTaskUseCase: context.read(),
-                  projectUid: extra['projectUid'] as String,
-                  taskListUid: extra['taskListUid'] as String,
-                  taskUid: taskId,
-                )..fetchTask(),
-            child: TaskScreen(taskName: extra['taskName'] as String),
+                  assignUserToTaskUseCase: context.read(),
+                  getUsersByUidsUseCase: context.read(),
+                  getProjectByUidUsecase: context.read(),
+                  sessionProvider: context.read(),
+                )..fetchTask(projectUid, taskListUid, taskUid),
+            child: TaskScreen(
+              taskName: extra['taskName'] as String,
+              projectUid: projectUid,
+              taskListUid: taskListUid,
+              taskUid: taskUid,
+            ),
           );
         },
       ),
@@ -270,7 +279,14 @@ GoRouter router(SessionListenable sessionListenable) {
           GoRoute(
             path: Routes.inbox,
             builder: (context, state) {
-              return InboxScreen();
+              return BlocProvider(
+                create:
+                    (context) => InboxCubit(
+                      getInboxTasksUsecase: context.read(),
+                      checkTaskUsecase: context.read(),
+                    )..fetchInboxTasks(),
+                child: InboxScreen(),
+              );
             },
           ),
           GoRoute(

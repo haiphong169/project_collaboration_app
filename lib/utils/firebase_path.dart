@@ -7,4 +7,5 @@ abstract final class FirebasePath {
   static const String projects = 'projects';
   static const String taskLists = 'task_lists';
   static const String tasks = 'tasks';
+  static const String inbox = 'inbox';
 }

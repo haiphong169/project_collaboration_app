@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Loading() => CircularProgressIndicator(),
+                Loading() => Center(child: CircularProgressIndicator()),
                 Error(:final message) => Text(message),
                 _ => SizedBox(),
               },

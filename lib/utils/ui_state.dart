@@ -5,15 +5,17 @@ typedef VoidUiState = UiState<void>;
 sealed class UiState<T> {
   const UiState();
 
-  const factory UiState.loading() = Loading._;
+  const factory UiState.loading([T data]) = Loading._;
   const factory UiState.success(T data) = Success._;
-  const factory UiState.error(String message) = Error._;
+  const factory UiState.error(String message, [T data]) = Error._;
   const factory UiState.idle() = Idle._;
   const factory UiState.onNavigationPop() = OnNavigationPop._;
 }
 
 final class Loading<T> extends UiState<T> with EquatableMixin {
-  const Loading._();
+  const Loading._([this.data]);
+
+  final T? data;
 
   @override
   List<Object?> get props => [];
@@ -29,9 +31,10 @@ final class Success<T> extends UiState<T> with EquatableMixin {
 }
 
 final class Error<T> extends UiState<T> with EquatableMixin {
-  const Error._(this.message);
+  const Error._(this.message, [this.data]);
 
   final String message;
+  final T? data;
 
   @override
   List<Object?> get props => [message];

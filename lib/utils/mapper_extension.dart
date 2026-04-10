@@ -95,6 +95,7 @@ extension TaskMapper on Task {
       projectUid: projectUid,
       name: name,
       isCompleted: isCompleted,
+      assignees: assignees,
     );
   }
 }

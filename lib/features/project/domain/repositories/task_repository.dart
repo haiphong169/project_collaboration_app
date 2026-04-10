@@ -10,4 +10,18 @@ abstract class TaskRepository {
     Map<String, dynamic> fields,
   );
   Future<void> deleteTask(String projectUid, String taskListUid, String uid);
+  Future<void> assignUserToTask(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String userUid,
+  );
+  Future<void> unassignUserFromTask(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String userUid,
+  );
+
+  Future<List<Task>> fetchUserInbox(String userUid);
 }

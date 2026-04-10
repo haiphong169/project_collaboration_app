@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_collaboration_app/features/user/data/models/user_model.dart';
 import 'package:project_collaboration_app/utils/app_exception.dart';
 import 'package:project_collaboration_app/utils/firebase_path.dart';
-import 'package:project_collaboration_app/utils/logger.dart';
 import 'package:project_collaboration_app/utils/result.dart';
 
 class UserRemoteDataSource {
@@ -27,6 +26,7 @@ class UserRemoteDataSource {
   }
 
   Future<List<UserModel>> getUsersByIds(List<String> uids) async {
+    if (uids.isEmpty) return [];
     final snapshots =
         await _db
             .collection(FirebasePath.users)

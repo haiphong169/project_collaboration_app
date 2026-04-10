@@ -6,6 +6,7 @@ import 'package:project_collaboration_app/features/auth/domain/usecases/login_us
 import 'package:project_collaboration_app/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:project_collaboration_app/features/auth/domain/usecases/register_usecase.dart';
 import 'package:project_collaboration_app/features/auth/domain/usecases/sign_in_with_google_usecase.dart';
+import 'package:project_collaboration_app/features/inbox/domain/usecases/get_inbox_tasks_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/add_conversation_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/check_existing_conversation_usecase.dart';
 import 'package:project_collaboration_app/features/messaging/domain/usecases/conversation/get_conversation_list_usecase.dart';
@@ -28,6 +29,7 @@ import 'package:project_collaboration_app/features/project/domain/usecases/proje
 import 'package:project_collaboration_app/features/project/domain/usecases/project/invite_user_usercase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/project/leave_project_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/add_task_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/assign_user_to_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/check_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/delete_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/get_task_usecase.dart';
@@ -297,6 +299,19 @@ final repositoryProviders = [
   ),
   RepositoryProvider<LeaveProjectUseCase>(
     create: (context) => LeaveProjectUseCase(context.read<ProjectRepository>()),
+  ),
+  RepositoryProvider<GetInboxTasksUsecase>(
+    create:
+        (context) => GetInboxTasksUsecase(
+          taskRepository: context.read<TaskRepository>(),
+          sessionProvider: context.read<SessionProvider>(),
+        ),
+  ),
+  RepositoryProvider<AssignUserToTaskUsecase>(
+    create:
+        (context) => AssignUserToTaskUsecase(
+          taskRepository: context.read<TaskRepository>(),
+        ),
   ),
 ];
 

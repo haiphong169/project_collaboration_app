@@ -99,4 +99,112 @@ class TaskRemoteDataSource {
 
     return batch.commit();
   }
+
+  Future<void> assignUserToTask(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String userUid,
+  ) {
+    final batch = _db.batch();
+
+    final taskRef = _db
+        .collection(FirebasePath.projects)
+        .doc(projectUid)
+        .collection(FirebasePath.taskLists)
+        .doc(taskListUid)
+        .collection(FirebasePath.tasks)
+        .doc(taskUid);
+
+    batch.update(taskRef, {
+      'assignees': FieldValue.arrayUnion([userUid]),
+    });
+
+    final userInboxRef =
+        _db
+            .collection(FirebasePath.users)
+            .doc(userUid)
+            .collection(FirebasePath.inbox)
+            .doc();
+
+    batch.set(userInboxRef, {
+      'projectUid': projectUid,
+      'taskListUid': taskListUid,
+      'taskUid': taskUid,
+    });
+
+    return batch.commit();
+  }
+
+  Future<void> unassignUserFromTask(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String userUid,
+  ) async {
+    final batch = _db.batch();
+
+    final taskRef = _db
+        .collection(FirebasePath.projects)
+        .doc(projectUid)
+        .collection(FirebasePath.taskLists)
+        .doc(taskListUid)
+        .collection(FirebasePath.tasks)
+        .doc(taskUid);
+
+    batch.update(taskRef, {
+      'assignees': FieldValue.arrayRemove([userUid]),
+    });
+
+    final userInboxQuery = _db
+        .collection(FirebasePath.users)
+        .doc(userUid)
+        .collection(FirebasePath.inbox)
+        .where('taskUid', isEqualTo: taskUid);
+
+    final snapshot = await userInboxQuery.get();
+
+    for (final doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    return batch.commit();
+  }
+
+  Future<List<TaskModel>> fetchUserInbox(String userUid) async {
+    final inboxSnapshots =
+        await _db
+            .collection(FirebasePath.users)
+            .doc(userUid)
+            .collection(FirebasePath.inbox)
+            .get();
+
+    final tasks = await Future.wait(
+      inboxSnapshots.docs.map((inboxDoc) async {
+        final inboxData = inboxDoc.data();
+        final String projectUid = inboxData['projectUid'];
+        final String taskListUid = inboxData['taskListUid'];
+        final String taskUid = inboxData['taskUid'];
+
+        final taskSnapshot =
+            await _db
+                .collection(FirebasePath.projects)
+                .doc(projectUid)
+                .collection(FirebasePath.taskLists)
+                .doc(taskListUid)
+                .collection(FirebasePath.tasks)
+                .doc(taskUid)
+                .get();
+
+        return TaskModel.fromJson(
+          taskSnapshot.data()!,
+          taskUid,
+          taskListUid,
+          projectUid,
+        );
+      }),
+    );
+
+    return tasks;
+  }
 }
