@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 import 'package:project_collaboration_app/features/project/domain/entities/task.dart';
 
@@ -19,6 +20,8 @@ class TaskModel {
   final List<String> assignees;
   @HiveField(6)
   final String? description;
+  @HiveField(7)
+  final DateTime? dueDate;
 
   const TaskModel({
     required this.uid,
@@ -28,6 +31,7 @@ class TaskModel {
     required this.isCompleted,
     required this.assignees,
     this.description,
+    this.dueDate,
   });
 
   factory TaskModel.fromJson(
@@ -44,6 +48,7 @@ class TaskModel {
       isCompleted: map['isCompleted'] as bool,
       assignees: List<String>.from(map['assignees'] as List<dynamic>),
       description: map['description'] as String?,
+      dueDate: (map['dueDate'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -53,6 +58,7 @@ class TaskModel {
       'isCompleted': isCompleted,
       'assignees': assignees,
       'description': description,
+      if (dueDate != null) 'dueDate': Timestamp.fromDate(dueDate!),
     };
   }
 
@@ -65,6 +71,7 @@ class TaskModel {
       isCompleted: isCompleted,
       assignees: assignees,
       description: description,
+      dueDate: dueDate,
     );
   }
 }

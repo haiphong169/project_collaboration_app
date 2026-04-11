@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_collaboration_app/features/auth/domain/repositories/session_provider.dart';
 import 'package:project_collaboration_app/features/project/domain/repositories/task_repository.dart';
@@ -130,15 +131,12 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
     String taskListUid,
     String taskUid,
     String newDescription,
-  ) {
+  ) async {
     final previousData = state.getData();
     if (previousData == null) return;
     final previousTask = previousData.task;
 
     try {
-      _taskRepository.updateTaskFields(projectUid, taskListUid, taskUid, {
-        'description': newDescription,
-      });
       emit(
         UiState.success(
           previousData.copyWith(
@@ -146,6 +144,35 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
           ),
         ),
       );
+      await _taskRepository.updateTaskFields(projectUid, taskListUid, taskUid, {
+        'description': newDescription,
+      });
+    } on Exception catch (e) {
+      emit(UiState.error(e.toString(), previousData));
+    }
+  }
+
+  void updateTaskDueDate(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    DateTime newDueDate,
+  ) async {
+    final previousData = state.getData();
+    if (previousData == null) return;
+    final previousTask = previousData.task;
+
+    try {
+      emit(
+        UiState.success(
+          previousData.copyWith(
+            task: previousTask.copyWith(dueDate: newDueDate),
+          ),
+        ),
+      );
+      await _taskRepository.updateTaskFields(projectUid, taskListUid, taskUid, {
+        'dueDate': Timestamp.fromDate(newDueDate),
+      });
     } on Exception catch (e) {
       emit(UiState.error(e.toString(), previousData));
     }

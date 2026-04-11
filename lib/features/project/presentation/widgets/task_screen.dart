@@ -216,73 +216,137 @@ class _TaskScreenState extends State<TaskScreen> {
             ),
           ),
           SizedBox(height: 24),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8, bottom: 16),
-              child: TextButton(
-                onPressed: () {
-                  context.read<TaskCubit>().assignTaskToMyself(
-                    widget.projectUid,
-                    widget.taskListUid,
-                    widget.taskUid,
-                    model.assignees.contains(model.currentUser) ? false : true,
-                  );
-                },
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8, bottom: 16),
                 child: Text(
-                  model.assignees.contains(model.currentUser)
-                      ? 'Unassign myself'
-                      : 'Assign myself',
+                  'People working on this task',
+                  style: textTheme.labelMedium,
+                ),
+              ),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 8, bottom: 16),
+                child: TextButton(
+                  onPressed: () {
+                    context.read<TaskCubit>().assignTaskToMyself(
+                      widget.projectUid,
+                      widget.taskListUid,
+                      widget.taskUid,
+                      model.assignees.contains(model.currentUser)
+                          ? false
+                          : true,
+                    );
+                  },
+                  child: Text(
+                    model.assignees.contains(model.currentUser)
+                        ? 'Unassign myself'
+                        : 'Assign myself',
+                  ),
+                ),
+              ),
+            ],
+          ),
+          model.assignees.isEmpty
+              ? Center(
+                child: SizedBox(
+                  height: 100,
+                  child: Center(child: Text('No assginees yet.')),
+                ),
+              )
+              : Padding(
+                padding: const EdgeInsets.only(
+                  left: 8,
+                  right: 8,
+                  top: 16,
+                  bottom: 16,
+                ),
+                child: SizedBox(
+                  height: 75,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children:
+                        model.assignees
+                            .map(
+                              (assignee) => Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  UserCircleAvatar(
+                                    avatar: assignee.avatar,
+                                    radius: 28,
+                                  ),
+                                  SizedBox(width: 16),
+                                  Text(
+                                    assignee.username,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                ],
+                              ),
+                            )
+                            .toList(),
+                  ),
+                ),
+              ),
+          SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: Container(
+              color: colorScheme.surfaceContainerHighest,
+              child: ListTile(
+                leading: Icon(Icons.calendar_today),
+                title: Text('Due date', style: textTheme.labelLarge),
+                subtitle: Text(
+                  model.task.dueDate != null
+                      ? '${model.task.dueDate!.day}/${model.task.dueDate!.month}/${model.task.dueDate!.year}${model.task.dueDate!.hour != 0 || model.task.dueDate!.minute != 0 ? ' ${model.task.dueDate!.hour.toString().padLeft(2, '0')}:${model.task.dueDate!.minute.toString().padLeft(2, '0')}' : ''}'
+                      : 'No due date',
+                ),
+                trailing: TextButton.icon(
+                  onPressed: () async {
+                    final selectedDate = await showDatePicker(
+                      context: context,
+                      initialDate: model.task.dueDate ?? DateTime.now(),
+                      firstDate: DateTime.now().subtract(
+                        Duration(days: 365 * 5),
+                      ),
+                      lastDate: DateTime.now().add(Duration(days: 365 * 10)),
+                    );
+                    if (selectedDate == null) return;
+
+                    final selectedTime = await showTimePicker(
+                      context: context,
+                      initialTime:
+                          model.task.dueDate != null
+                              ? TimeOfDay(
+                                hour: model.task.dueDate!.hour,
+                                minute: model.task.dueDate!.minute,
+                              )
+                              : TimeOfDay.now(),
+                    );
+
+                    final combined = DateTime(
+                      selectedDate.year,
+                      selectedDate.month,
+                      selectedDate.day,
+                      selectedTime?.hour ?? 0,
+                      selectedTime?.minute ?? 0,
+                    );
+
+                    context.read<TaskCubit>().updateTaskDueDate(
+                      widget.projectUid,
+                      widget.taskListUid,
+                      widget.taskUid,
+                      combined,
+                    );
+                  },
+                  icon: Icon(
+                    model.task.dueDate != null ? Icons.edit : Icons.add,
+                  ),
+                  label: Text(model.task.dueDate != null ? 'Edit' : 'Add'),
                 ),
               ),
             ),
-          ),
-          Container(
-            color: colorScheme.surfaceContainerHighest,
-            child:
-                model.assignees.isEmpty
-                    ? Center(
-                      child: SizedBox(
-                        height: 100,
-                        child: Center(child: Text('No assginees yet.')),
-                      ),
-                    )
-                    : Padding(
-                      padding: const EdgeInsets.only(
-                        left: 8,
-                        right: 8,
-                        top: 16,
-                        bottom: 16,
-                      ),
-                      child: SizedBox(
-                        height: 200,
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          padding: EdgeInsets.zero,
-                          children:
-                              model.assignees
-                                  .map(
-                                    (assignee) => Row(
-                                      children: [
-                                        UserCircleAvatar(
-                                          avatar: assignee.avatar,
-                                          radius: 32,
-                                        ),
-                                        SizedBox(width: 16),
-                                        Text(
-                                          assignee.username,
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleMedium,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                  .toList(),
-                        ),
-                      ),
-                    ),
           ),
         ],
       ),

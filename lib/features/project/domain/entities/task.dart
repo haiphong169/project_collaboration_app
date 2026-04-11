@@ -8,6 +8,7 @@ class Task extends Equatable {
   final bool isCompleted;
   final List<String> assignees;
   final String? description;
+  final DateTime? dueDate;
 
   const Task({
     required this.uid,
@@ -17,6 +18,7 @@ class Task extends Equatable {
     required this.isCompleted,
     required this.assignees,
     this.description,
+    this.dueDate,
   });
 
   @override
@@ -28,6 +30,7 @@ class Task extends Equatable {
     isCompleted,
     assignees,
     if (description != null) description,
+    if (dueDate != null) dueDate,
   ];
 
   Task copyWith({
@@ -38,6 +41,7 @@ class Task extends Equatable {
     bool? isCompleted,
     List<String>? assignees,
     String? description,
+    DateTime? dueDate,
   }) {
     return Task(
       uid: uid ?? this.uid,
@@ -47,6 +51,7 @@ class Task extends Equatable {
       isCompleted: isCompleted ?? this.isCompleted,
       assignees: assignees ?? this.assignees,
       description: description ?? this.description,
+      dueDate: dueDate ?? this.dueDate,
     );
   }
 }
