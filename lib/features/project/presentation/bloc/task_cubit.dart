@@ -4,11 +4,15 @@ import 'package:project_collaboration_app/features/auth/domain/repositories/sess
 import 'package:project_collaboration_app/features/project/domain/repositories/task_repository.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/project/get_project_by_uid_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/assign_user_to_task_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/add_todo_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/check_todo_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/remove_todo_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/check_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/delete_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/get_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/presentation/ui_models/task_ui_model.dart';
 import 'package:project_collaboration_app/features/user/domain/usecases/get_users_by_uids_usecase.dart';
+import 'package:project_collaboration_app/utils/logger.dart';
 import 'package:project_collaboration_app/utils/ui_state.dart';
 
 class TaskCubit extends Cubit<UiState<TaskUiModel>> {
@@ -17,17 +21,23 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
     required CheckTaskUseCase checkTaskUseCase,
     required DeleteTaskUseCase deleteTaskUseCase,
     required AssignUserToTaskUsecase assignUserToTaskUseCase,
+    required AddTodoUseCase addTodoUseCase,
+    required RemoveTodoUseCase removeTodoUseCase,
     required GetUsersByUidsUseCase getUsersByUidsUseCase,
     required SessionProvider sessionProvider,
     required GetProjectByUidUseCase getProjectByUidUsecase,
+    required CheckTodoUsecase checkTodoUsecase,
     required TaskRepository taskRepository,
   }) : _getTaskUseCase = getTaskUseCase,
        _checkTaskUseCase = checkTaskUseCase,
        _deleteTaskUseCase = deleteTaskUseCase,
        _assignUserToTaskUsecase = assignUserToTaskUseCase,
+       _addTodoUseCase = addTodoUseCase,
+       _removeTodoUseCase = removeTodoUseCase,
        _getUsersByUidsUseCase = getUsersByUidsUseCase,
        _session = sessionProvider,
        _getProjectByUid = getProjectByUidUsecase,
+       _checkTodoUsecase = checkTodoUsecase,
        _taskRepository = taskRepository,
        super(UiState.idle());
 
@@ -35,7 +45,10 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
   final CheckTaskUseCase _checkTaskUseCase;
   final DeleteTaskUseCase _deleteTaskUseCase;
   final AssignUserToTaskUsecase _assignUserToTaskUsecase;
+  final AddTodoUseCase _addTodoUseCase;
+  final RemoveTodoUseCase _removeTodoUseCase;
   final GetUsersByUidsUseCase _getUsersByUidsUseCase;
+  final CheckTodoUsecase _checkTodoUsecase;
   final SessionProvider _session;
   final GetProjectByUidUseCase _getProjectByUid;
   final TaskRepository _taskRepository;
@@ -174,6 +187,102 @@ class TaskCubit extends Cubit<UiState<TaskUiModel>> {
         'dueDate': Timestamp.fromDate(newDueDate),
       });
     } on Exception catch (e) {
+      emit(UiState.error(e.toString(), previousData));
+    }
+  }
+
+  void addTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String name,
+  ) async {
+    final previousData = state.getData();
+    if (previousData == null) return;
+
+    final previousTask = previousData.task;
+
+    final newTodo = _addTodoUseCase.createTodo(name);
+
+    try {
+      emit(
+        UiState.success(
+          previousData.copyWith(
+            task: previousTask.copyWith(
+              todos: [...previousTask.todos, newTodo],
+            ),
+          ),
+        ),
+      );
+
+      await _addTodoUseCase(projectUid, taskListUid, taskUid, newTodo);
+    } on Exception catch (e) {
+      emit(UiState.error(e.toString(), previousData));
+    }
+  }
+
+  void removeTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String todoUid,
+  ) async {
+    final previousData = state.getData();
+    if (previousData == null) return;
+
+    final previousTask = previousData.task;
+
+    final updatedTodos =
+        previousTask.todos.where((t) => t.uid != todoUid).toList();
+
+    try {
+      emit(
+        UiState.success(
+          previousData.copyWith(
+            task: previousTask.copyWith(todos: updatedTodos),
+          ),
+        ),
+      );
+
+      await _removeTodoUseCase(projectUid, taskListUid, taskUid, todoUid);
+    } on Exception catch (e) {
+      emit(UiState.error(e.toString(), previousData));
+    }
+  }
+
+  void checkTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String todoUid,
+    bool newValue,
+  ) async {
+    final previousData = state.getData();
+    if (previousData == null) return;
+
+    final previousTask = previousData.task;
+
+    final newTodoList = [...previousTask.todos];
+    final index = newTodoList.indexWhere((todo) => todo.uid == todoUid);
+
+    if (index == -1) return;
+    newTodoList[index] = newTodoList[index].copyWith(isCompleted: newValue);
+    emit(
+      UiState.success(
+        previousData.copyWith(task: previousTask.copyWith(todos: newTodoList)),
+      ),
+    );
+
+    try {
+      await _checkTodoUsecase(
+        projectUid,
+        taskListUid,
+        taskUid,
+        todoUid,
+        newValue,
+      );
+    } on Exception catch (e) {
+      AppLogger().d('error');
       emit(UiState.error(e.toString(), previousData));
     }
   }

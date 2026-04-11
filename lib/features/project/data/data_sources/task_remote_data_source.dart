@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:project_collaboration_app/features/project/data/models/task_model.dart';
 import 'package:project_collaboration_app/utils/firebase_path.dart';
-import 'package:project_collaboration_app/utils/logger.dart';
 
 class TaskRemoteDataSource {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -223,5 +223,93 @@ class TaskRemoteDataSource {
     }
 
     return tasks;
+  }
+
+  Future<void> addTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    TodoModel todo,
+  ) {
+    return _db
+        .collection(FirebasePath.projects)
+        .doc(projectUid)
+        .collection(FirebasePath.taskLists)
+        .doc(taskListUid)
+        .collection(FirebasePath.tasks)
+        .doc(taskUid)
+        .update({
+          'todos': FieldValue.arrayUnion([todo.toJson()]),
+        });
+  }
+
+  Future<void> removeTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String todoUid,
+  ) async {
+    final taskRef = _db
+        .collection(FirebasePath.projects)
+        .doc(projectUid)
+        .collection(FirebasePath.taskLists)
+        .doc(taskListUid)
+        .collection(FirebasePath.tasks)
+        .doc(taskUid);
+
+    await _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(taskRef);
+
+      if (!snapshot.exists) return;
+      final data = snapshot.data();
+      if (data == null || !data.containsKey('todos')) return;
+
+      final todos = List<Map<String, dynamic>>.from(
+        (data['todos'] as List<dynamic>).map(
+          (e) => Map<String, dynamic>.from(e as Map),
+        ),
+      );
+
+      todos.removeWhere((t) => t['uid'] == todoUid);
+
+      transaction.update(taskRef, {'todos': todos});
+    });
+  }
+
+  Future<void> checkTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String todoUid,
+    bool newValue,
+  ) async {
+    final taskRef = _db
+        .collection(FirebasePath.projects)
+        .doc(projectUid)
+        .collection(FirebasePath.taskLists)
+        .doc(taskListUid)
+        .collection(FirebasePath.tasks)
+        .doc(taskUid);
+    final taskSnapshot = await taskRef.get();
+
+    if (!taskSnapshot.exists) return;
+
+    final data = taskSnapshot.data();
+    if (data == null || !data.containsKey('todos')) return;
+
+    final todos =
+        (data['todos'] as List<dynamic>)
+            .map((json) => TodoModel.fromJson(json))
+            .toList();
+    final targetIndex = todos.indexWhere((todo) => todo.uid == todoUid);
+    todos[targetIndex] = TodoModel(
+      uid: todoUid,
+      name: todos[targetIndex].name,
+      isCompleted: newValue,
+    );
+
+    return taskRef.update({
+      'todos': todos.map((todo) => todo.toJson()).toList(),
+    });
   }
 }

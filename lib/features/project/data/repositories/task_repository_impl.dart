@@ -83,4 +83,51 @@ class TaskRepositoryImpl implements TaskRepository {
     final modelList = await _taskRemoteDataSource.fetchUserInbox(userUid);
     return modelList.map((model) => model.toEntity()).toList();
   }
+
+  @override
+  Future<void> addTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    Todo todo,
+  ) {
+    return _taskRemoteDataSource.addTodo(
+      projectUid,
+      taskListUid,
+      taskUid,
+      todo.toModel(),
+    );
+  }
+
+  @override
+  Future<void> removeTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String todoUid,
+  ) {
+    return _taskRemoteDataSource.removeTodo(
+      projectUid,
+      taskListUid,
+      taskUid,
+      todoUid,
+    );
+  }
+
+  @override
+  Future<void> checkTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String todoUid,
+    bool newValue,
+  ) {
+    return _taskRemoteDataSource.checkTodo(
+      projectUid,
+      taskListUid,
+      taskUid,
+      todoUid,
+      newValue,
+    );
+  }
 }

@@ -16,6 +16,7 @@ class AddTaskUseCase {
       name: name,
       isCompleted: false,
       assignees: [],
+      todos: [],
     );
 
     return _taskRepository.createTask(newTask);

@@ -22,6 +22,8 @@ class TaskModel {
   final String? description;
   @HiveField(7)
   final DateTime? dueDate;
+  @HiveField(8)
+  final List<TodoModel> todos;
 
   const TaskModel({
     required this.uid,
@@ -32,6 +34,7 @@ class TaskModel {
     required this.assignees,
     this.description,
     this.dueDate,
+    required this.todos,
   });
 
   factory TaskModel.fromJson(
@@ -49,6 +52,10 @@ class TaskModel {
       assignees: List<String>.from(map['assignees'] as List<dynamic>),
       description: map['description'] as String?,
       dueDate: (map['dueDate'] as Timestamp?)?.toDate(),
+      todos:
+          List<Map<String, dynamic>>.from(
+            map['todos'] as List<dynamic>,
+          ).map((m) => TodoModel.fromJson(m)).toList(),
     );
   }
 
@@ -59,6 +66,7 @@ class TaskModel {
       'assignees': assignees,
       'description': description,
       if (dueDate != null) 'dueDate': Timestamp.fromDate(dueDate!),
+      'todos': todos.map((t) => t.toJson()).toList(),
     };
   }
 
@@ -72,6 +80,41 @@ class TaskModel {
       assignees: assignees,
       description: description,
       dueDate: dueDate,
+      todos: todos.map((t) => t.toEntity()).toList(),
     );
+  }
+}
+
+@HiveType(typeId: 8)
+class TodoModel {
+  @HiveField(0)
+  final String uid;
+
+  @HiveField(1)
+  final String name;
+
+  @HiveField(2)
+  final bool isCompleted;
+
+  const TodoModel({
+    required this.uid,
+    required this.name,
+    required this.isCompleted,
+  });
+
+  factory TodoModel.fromJson(Map<String, dynamic> map) {
+    return TodoModel(
+      uid: map['uid'] as String,
+      name: map['name'] as String,
+      isCompleted: map['isCompleted'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'uid': uid, 'name': name, 'isCompleted': isCompleted};
+  }
+
+  Todo toEntity() {
+    return Todo(uid: uid, name: name, isCompleted: isCompleted);
   }
 }

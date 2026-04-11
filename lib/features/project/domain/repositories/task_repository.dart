@@ -24,4 +24,25 @@ abstract class TaskRepository {
   );
 
   Future<List<Task>> fetchUserInbox(String userUid);
+  Future<void> addTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    Todo todo,
+  );
+
+  Future<void> removeTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String todoUid,
+  );
+
+  Future<void> checkTodo(
+    String projectUid,
+    String taskListUid,
+    String taskUid,
+    String todoUid,
+    bool newValue,
+  );
 }

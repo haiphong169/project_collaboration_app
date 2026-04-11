@@ -69,7 +69,7 @@ class UserRemoteDataSource {
             .map((doc) => UserModel.fromJson(doc.data(), doc.id))
             .toList(),
       );
-    } on Exception catch (e) {
+    } on Exception {
       return Result.failure(FirestoreException());
     }
   }

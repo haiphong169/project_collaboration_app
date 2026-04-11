@@ -25,17 +25,20 @@ class TaskScreen extends StatefulWidget {
 
 class _TaskScreenState extends State<TaskScreen> {
   late final TextEditingController _descriptionController;
+  late final TextEditingController _todoController;
   bool _isEditingDescription = false;
 
   @override
   void initState() {
     super.initState();
     _descriptionController = TextEditingController();
+    _todoController = TextEditingController();
   }
 
   @override
   void dispose() {
     _descriptionController.dispose();
+    _todoController.dispose();
     super.dispose();
   }
 
@@ -290,6 +293,101 @@ class _TaskScreenState extends State<TaskScreen> {
                 ),
               ),
           SizedBox(height: 8),
+          // Checklist section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Checklist', style: textTheme.labelMedium),
+                SizedBox(height: 8),
+                Container(
+                  color: colorScheme.surfaceContainerHighest,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 4.0,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _todoController,
+                            decoration: InputDecoration(
+                              hintText: 'Add a todo',
+                              border: InputBorder.none,
+                            ),
+                            onSubmitted: (value) {
+                              if (value.trim().isEmpty) return;
+                              context.read<TaskCubit>().addTodo(
+                                widget.projectUid,
+                                widget.taskListUid,
+                                widget.taskUid,
+                                value.trim(),
+                              );
+                              _todoController.clear();
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            final text = _todoController.text.trim();
+                            if (text.isEmpty) return;
+                            context.read<TaskCubit>().addTodo(
+                              widget.projectUid,
+                              widget.taskListUid,
+                              widget.taskUid,
+                              text,
+                            );
+                            _todoController.clear();
+                          },
+                          icon: Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8),
+                Container(
+                  color: colorScheme.surfaceContainerHighest,
+                  child: Column(
+                    children:
+                        model.task.todos.map((todo) {
+                          return ListTile(
+                            leading: Checkbox(
+                              value: todo.isCompleted,
+                              onChanged: (newValue) {
+                                if (newValue != null) {
+                                  context.read<TaskCubit>().checkTodo(
+                                    widget.projectUid,
+                                    widget.taskListUid,
+                                    widget.taskUid,
+                                    todo.uid,
+                                    newValue,
+                                  );
+                                }
+                              },
+                            ),
+                            title: Text(todo.name),
+                            trailing: IconButton(
+                              onPressed: () {
+                                context.read<TaskCubit>().removeTodo(
+                                  widget.projectUid,
+                                  widget.taskListUid,
+                                  widget.taskUid,
+                                  todo.uid,
+                                );
+                              },
+                              icon: Icon(Icons.delete_outline),
+                            ),
+                          );
+                        }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: Container(

@@ -30,6 +30,9 @@ import 'package:project_collaboration_app/features/project/domain/usecases/proje
 import 'package:project_collaboration_app/features/project/domain/usecases/project/leave_project_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/add_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/assign_user_to_task_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/add_todo_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/check_todo_usecase.dart';
+import 'package:project_collaboration_app/features/project/domain/usecases/task/remove_todo_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/check_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/delete_task_usecase.dart';
 import 'package:project_collaboration_app/features/project/domain/usecases/task/get_task_usecase.dart';
@@ -312,6 +315,21 @@ final repositoryProviders = [
         (context) => AssignUserToTaskUsecase(
           taskRepository: context.read<TaskRepository>(),
         ),
+  ),
+  RepositoryProvider<AddTodoUseCase>(
+    create:
+        (context) =>
+            AddTodoUseCase(taskRepository: context.read<TaskRepository>()),
+  ),
+  RepositoryProvider<RemoveTodoUseCase>(
+    create:
+        (context) =>
+            RemoveTodoUseCase(taskRepository: context.read<TaskRepository>()),
+  ),
+  RepositoryProvider<CheckTodoUsecase>(
+    create:
+        (context) =>
+            CheckTodoUsecase(taskRepository: context.read<TaskRepository>()),
   ),
 ];
 

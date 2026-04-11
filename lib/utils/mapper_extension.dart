@@ -98,6 +98,13 @@ extension TaskMapper on Task {
       assignees: assignees,
       description: description,
       dueDate: dueDate,
+      todos: todos.map((t) => t.toModel()).toList(),
     );
+  }
+}
+
+extension TodoMapper on Todo {
+  TodoModel toModel() {
+    return TodoModel(uid: uid, name: name, isCompleted: isCompleted);
   }
 }

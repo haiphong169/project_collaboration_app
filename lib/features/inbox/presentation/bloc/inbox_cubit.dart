@@ -20,7 +20,7 @@ class InboxCubit extends Cubit<UiState<List<Task>>> {
       emit(UiState.loading());
       final tasks = await _getInboxTasks();
       emit(UiState.success(tasks));
-    } on Exception catch (e) {
+    } on Exception {
       emit(UiState.error("Can't load inbox tasks"));
     }
   }
