@@ -293,7 +293,6 @@ class _TaskScreenState extends State<TaskScreen> {
                 ),
               ),
           SizedBox(height: 8),
-          // Checklist section
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(

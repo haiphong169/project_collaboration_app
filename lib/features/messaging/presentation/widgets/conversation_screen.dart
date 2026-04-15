@@ -61,7 +61,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     },
                   ),
                   SizedBox(height: 36),
-                  // input field
                   Row(
                     children: [
                       Expanded(child: TextField(controller: _controller)),

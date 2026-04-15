@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:project_collaboration_app/core/ui/user_circle_avatar.dart';
 import 'package:project_collaboration_app/features/user/domain/entities/user.dart';
 
-// enum MessageStatus { pending, sent, delivered, read }
-
 class ChatRow extends StatelessWidget {
   const ChatRow({
     super.key,
@@ -38,25 +36,22 @@ class ChatRow extends StatelessWidget {
             ] else
               SizedBox(width: 56),
           ],
-          ChatBubble(text: text, time: "", isMe: isMe),
+          _ChatBubble(text: text, time: "", isMe: isMe),
         ],
       ),
     );
   }
 }
 
-class ChatBubble extends StatelessWidget {
+class _ChatBubble extends StatelessWidget {
   final String text;
   final String time;
   final bool isMe;
-  // final MessageStatus status;
 
-  const ChatBubble({
-    super.key,
+  const _ChatBubble({
     required this.text,
     required this.time,
     required this.isMe,
-    // this.status = MessageStatus.sent,
   });
 
   @override
@@ -71,7 +66,6 @@ class ChatBubble extends StatelessWidget {
         children: [
           _BubbleShape(isMe: isMe, text: text, time: time),
           const SizedBox(height: 2),
-          // _MetaRow(time: time, isMe: isMe, status: status),
         ],
       ),
     );
@@ -110,9 +104,7 @@ class _BubbleShape extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
-          fontSize: 15,
-          height: 1.4,
+        style: theme.textTheme.bodyLarge!.copyWith(
           color:
               isMe
                   ? theme.colorScheme.onPrimary
@@ -122,52 +114,3 @@ class _BubbleShape extends StatelessWidget {
     );
   }
 }
-
-// class _MetaRow extends StatelessWidget {
-//   final String time;
-//   final bool isMe;
-//   final MessageStatus status;
-
-//   const _MetaRow({
-//     required this.time,
-//     required this.isMe,
-//     required this.status,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final color = Theme.of(context).colorScheme.outline;
-
-//     return Row(
-//       mainAxisSize: MainAxisSize.min,
-//       children: [
-//         Text(time, style: TextStyle(fontSize: 11, color: color)),
-//         if (isMe) ...[
-//           const SizedBox(width: 4),
-//           _StatusIcon(status: status, color: color),
-//         ],
-//       ],
-//     );
-//   }
-// }
-
-// class _StatusIcon extends StatelessWidget {
-//   final MessageStatus status;
-//   final Color color;
-
-//   const _StatusIcon({required this.status, required this.color});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return switch (status) {
-//       MessageStatus.pending => SizedBox(
-//         width: 12,
-//         height: 12,
-//         child: CircularProgressIndicator(strokeWidth: 1.5, color: color),
-//       ),
-//       MessageStatus.sent => Icon(Icons.check, size: 14, color: color),
-//       MessageStatus.delivered => Icon(Icons.done_all, size: 14, color: color),
-//       MessageStatus.read => Icon(Icons.done_all, size: 14, color: Colors.blue),
-//     };
-//   }
-// }

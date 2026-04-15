@@ -4,7 +4,7 @@ import 'color_scheme.dart';
 import 'text_theme.dart';
 
 class AppTheme {
-  AppTheme._(); // Prevent instantiation
+  AppTheme._();
 
   static ThemeData get dark {
     final colors = darkColorScheme;
